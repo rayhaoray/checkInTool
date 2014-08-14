@@ -1,0 +1,15 @@
+<resources>
+
+    <string name="app_name">CheckInTool</string>
+
+    <string-array name="lists_array">
+        <item>Home</item>
+        <item>mPoints</item>
+        <item>Nature</item>
+        <item>Settings</item>
+    </string-array>
+
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    
+</resources>
