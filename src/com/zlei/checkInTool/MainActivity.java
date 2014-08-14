@@ -5,6 +5,7 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
@@ -19,12 +20,20 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+import br.com.condesales.EasyFoursquareAsync;
+import br.com.condesales.listeners.AccessTokenRequestListener;
+import br.com.condesales.listeners.ImageRequestListener;
+import br.com.condesales.listeners.UserInfoRequestListener;
+import br.com.condesales.models.User;
+import br.com.condesales.tasks.users.UserImageRequest;
 
 import com.sessionm.api.BaseActivity;
 import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionM.ActivityType;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements
+        AccessTokenRequestListener, ImageRequestListener {
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
@@ -33,7 +42,9 @@ public class MainActivity extends BaseActivity {
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private String[] mListTitles;
-    
+
+    private static EasyFoursquareAsync async;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,28 +87,31 @@ public class MainActivity extends BaseActivity {
                     }
                 };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
-        
 
         if (savedInstanceState == null) {
             selectItem(0);
         }
+
+        // ask for access
+        async = new EasyFoursquareAsync(this);
+        async.requestAccess(this);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
     }
-    
+
     @Override
     protected void onResume() {
         super.onResume();
     }
-    
+
     @Override
     protected void onPause() {
         super.onPause();
     }
-    
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -193,11 +207,18 @@ public class MainActivity extends BaseActivity {
                     container, false);
             switch (i) {
             case 1:
-                SessionM.getInstance().presentActivity(ActivityType.PORTAL);
+                Intent i2 = new Intent(this.getActivity(), VenuesActivity.class);
+                startActivity(i2);
                 break;
             case 2:
-                Intent intent = new Intent(this.getActivity(), AccountActivity.class);
-                startActivity(intent);
+                break;
+            case 3:
+                SessionM.getInstance().presentActivity(ActivityType.PORTAL);
+                break;
+            case 4:
+                Intent i1 = new Intent(this.getActivity(), AccountActivity.class);
+                startActivity(i1);
+                break;
             default:
                 break;
             }
@@ -231,6 +252,43 @@ public class MainActivity extends BaseActivity {
             imageView.setImageResource(R.drawable.ic_launcher);
             return rowView;
         }
+    }
+
+    @Override
+    public void onError(String errorMsg) {
+    }
+
+    @Override
+    public void onImageFetched(Bitmap bmp) {
+    }
+
+    @Override
+    public void onAccessGrant(String accessToken) {
+        // with the access token you can perform any request to foursquare.
+        async.getUserInfo(new UserInfoRequestListener() {
+
+            @Override
+            public void onError(String errorMsg) {
+                // Some error getting user info
+                Toast.makeText(MainActivity.this, errorMsg, Toast.LENGTH_LONG)
+                        .show();
+            }
+
+            @Override
+            public void onUserInfoFetched(User user) {
+                // OWww. did i already got user!?
+                if (user.getBitmapPhoto() == null) {
+                    UserImageRequest request = new UserImageRequest(
+                            MainActivity.this, MainActivity.this);
+                    request.execute(user.getPhoto());
+                } else {
+                }
+            }
+        });
+    }
+
+    public static EasyFoursquareAsync getAsync() {
+        return async;
     }
 
 }

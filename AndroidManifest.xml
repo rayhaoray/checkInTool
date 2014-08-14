@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.zlei.checkInTool"
     android:versionCode="1"
@@ -9,6 +10,8 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:icon="@drawable/ic_launcher"
@@ -21,8 +24,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
-        <activity android:name=".AccountActivity"></activity>
+        <activity android:name=".AccountActivity" >
+        </activity>
 
         <receiver android:name="com.sessionm.api.ConnectionReceiver" >
             <intent-filter>
@@ -44,6 +47,23 @@
         <meta-data
             android:name="com.sessionm.appid"
             android:value="53407ebe33b02986cdf66c54f096cac3cefa292d" />
+
+        <activity
+            android:name=".VenuesActivity"
+            android:label="@string/title_activity_venues" >
+        </activity>
+        <activity
+            android:name=".CheckInActivity"
+            android:label="@string/title_activity_check_in" >
+        </activity>
+        <activity
+            android:name=".TipsActivity"
+            android:label="@string/title_activity_tips"
+            android:parentActivityName=".VenuesActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.zlei.checkInTool.VenuesActivity" />
+        </activity>
     </application>
 
 </manifest>
