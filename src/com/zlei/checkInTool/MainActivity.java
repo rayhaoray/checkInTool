@@ -211,11 +211,9 @@ public class MainActivity extends BaseActivity implements
                 startActivity(i2);
                 break;
             case 2:
-                break;
-            case 3:
                 SessionM.getInstance().presentActivity(ActivityType.PORTAL);
                 break;
-            case 4:
+            case 3:
                 Intent i1 = new Intent(this.getActivity(), AccountActivity.class);
                 startActivity(i1);
                 break;

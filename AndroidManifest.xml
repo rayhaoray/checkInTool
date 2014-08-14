@@ -46,7 +46,7 @@
 
         <meta-data
             android:name="com.sessionm.appid"
-            android:value="53407ebe33b02986cdf66c54f096cac3cefa292d" />
+            android:value="e1fe79aae5e88ed012015715dc13e932175c6069" />
 
         <activity
             android:name=".VenuesActivity"
