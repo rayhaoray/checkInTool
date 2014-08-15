@@ -24,6 +24,8 @@
     <string name="venue_major">Major</string>
     <string name="venue_category">Category</string>
     <string name="venue_location">Location</string>
+    <string name="venue_stats">Stats</string>
+    <string name="venue_herenow">HereNow</string>
     <string name="check_in">Check In</string>
     <string name="title_activity_tips">TipsActivity</string>
 
