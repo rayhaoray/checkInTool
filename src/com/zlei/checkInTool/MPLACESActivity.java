@@ -1,8 +1,10 @@
 package com.zlei.checkInTool;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.CookieManager;
@@ -24,10 +26,8 @@ import java.util.ArrayList;
 
 public class MPLACESActivity extends ListActivity {
 
-    ArrayList<JSONObject> venues = new ArrayList<JSONObject>();
+    private static ArrayList<MVenues> venues = new ArrayList<MVenues>();
     ArrayList<String> venueNames = new ArrayList<String>();
-    ArrayList<String> venueAddresses = new ArrayList<String>();
-    ArrayList<String> venueCategories = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,8 +84,8 @@ public class MPLACESActivity extends ListActivity {
         }
 
         protected void onPostExecute(String result) {
+            Log.i("places", venuesJA.toString());
             setNearbyVenues(venuesJA);
-
         }
     }
 
@@ -93,10 +93,9 @@ public class MPLACESActivity extends ListActivity {
     protected void onListItemClick(ListView l, View v, int position, long id) {
         String item = (String) getListAdapter().getItem(position);
         Toast.makeText(this, item + " selected", Toast.LENGTH_SHORT).show();
-        String selectedVenue = venueNames.get(position);
-        //Intent intent = new Intent(VenuesActivity.this, CheckInActivity.class);
-        //intent.putExtra("selectedVenue", position);
-        //startActivity(intent);
+        Intent intent = new Intent(this, MCheckInActivity.class);
+        intent.putExtra("selectedVenue", position);
+        startActivity(intent);
     }
 
     private void updateData() {
@@ -113,11 +112,9 @@ public class MPLACESActivity extends ListActivity {
         if (jsonArray != null) {
             for (int i = 0; i < jsonArray.length(); i++) {
                 try {
-                    JSONObject venue = (JSONObject) jsonArray.get(i);
+                    MVenues venue = new MVenues((JSONObject)jsonArray.get(i));
                     venues.add(i, venue);
-                    venueNames.add(i, venue.getString("name"));
-                    venueAddresses.add(i, venue.getString("location"));
-                    venueCategories.add(i, venue.getString("categories"));
+                    venueNames.add(i, venue.getName());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -126,6 +123,10 @@ public class MPLACESActivity extends ListActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, venueNames);
         setListAdapter(adapter);
+    }
+
+    public static ArrayList<MVenues> getVenues(){
+        return venues;
     }
 
     @Override

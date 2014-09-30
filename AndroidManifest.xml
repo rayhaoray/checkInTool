@@ -60,6 +60,10 @@
             android:name=".MPLACESActivity"
             android:label="MPLACESActivity" >
         </activity>
+        <activity
+            android:name=".MCheckInActivity"
+            android:label="MCheckInActivity" >
+        </activity>
     </application>
 
 </manifest>
