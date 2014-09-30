@@ -2,6 +2,9 @@ package com.zlei.checkInTool;
 
 import android.app.ListActivity;
 import android.content.Intent;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -43,6 +46,7 @@ public class MPLACESActivity extends ListActivity {
 
     private class getVenuesTask extends AsyncTask<String, Void, String> {
         JSONArray venuesJA;
+
         protected String doInBackground(String... url) {
             try {
                 URL u = new URL(url[0]);
@@ -93,9 +97,12 @@ public class MPLACESActivity extends ListActivity {
     protected void onListItemClick(ListView l, View v, int position, long id) {
         String item = (String) getListAdapter().getItem(position);
         Toast.makeText(this, item + " selected", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this, MCheckInActivity.class);
-        intent.putExtra("selectedVenue", position);
-        startActivity(intent);
+        if (venues.get(position).getState().equals("checkable")) {
+            Intent intent = new Intent(this, MCheckInActivity.class);
+            intent.putExtra("selectedVenue", position);
+            startActivity(intent);
+        } else
+            Toast.makeText(this, "Too far! Cannot check in here!", Toast.LENGTH_SHORT).show();
     }
 
     private void updateData() {
@@ -103,8 +110,19 @@ public class MPLACESActivity extends ListActivity {
     }
 
     private void requestVenuesNearby() {
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        String provider = locationManager.getBestProvider(criteria, false);
+        Location location = locationManager.getLastKnownLocation(provider);
         String url = "https://api.sessionm.com/apps/aba6ba56b63680cad063e987df52a71e620dbc77/mplaces/ads/fetch" +
                 "?coordinates[latitude]=42.3493505&coordinates[longitude]=-71.0492305&coordinates[accuracy]=10";
+        if (location != null) {
+            double lat = location.getLatitude();
+            double lng = location.getLongitude();
+            url = "https://api.sessionm.com/apps/aba6ba56b63680cad063e987df52a71e620dbc77/mplaces/ads/fetch?coordinates" +
+                    "[latitude]=" + lat + "&coordinates[longitude]=" + lng + "&coordinates[accuracy]=10";
+            Toast.makeText(this, "Update!!", Toast.LENGTH_SHORT).show();
+        }
         new getVenuesTask().execute(url);
     }
 
@@ -112,7 +130,7 @@ public class MPLACESActivity extends ListActivity {
         if (jsonArray != null) {
             for (int i = 0; i < jsonArray.length(); i++) {
                 try {
-                    MVenues venue = new MVenues((JSONObject)jsonArray.get(i));
+                    MVenues venue = new MVenues((JSONObject) jsonArray.get(i));
                     venues.add(i, venue);
                     venueNames.add(i, venue.getName());
                 } catch (JSONException e) {
@@ -125,7 +143,7 @@ public class MPLACESActivity extends ListActivity {
         setListAdapter(adapter);
     }
 
-    public static ArrayList<MVenues> getVenues(){
+    public static ArrayList<MVenues> getVenues() {
         return venues;
     }
 
