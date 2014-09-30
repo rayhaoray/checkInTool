@@ -5,7 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="15"
+        android:minSdkVersion="16"
         android:targetSdkVersion="19" />
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -46,7 +46,7 @@
 
         <meta-data
             android:name="com.sessionm.appid"
-            android:value="e1fe79aae5e88ed012015715dc13e932175c6069" />
+            android:value="aba6ba56b63680cad063e987df52a71e620dbc77" />
 
         <activity
             android:name=".VenuesActivity"
@@ -57,12 +57,8 @@
             android:label="@string/title_activity_check_in" >
         </activity>
         <activity
-            android:name=".TipsActivity"
-            android:label="@string/title_activity_tips"
-            android:parentActivityName=".VenuesActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.zlei.checkInTool.VenuesActivity" />
+            android:name=".MPLACESActivity"
+            android:label="MPLACESActivity" >
         </activity>
     </application>
 

@@ -1,5 +1,7 @@
 package com.zlei.checkInTool;
 
+import java.util.Locale;
+
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
@@ -29,8 +31,8 @@ import br.com.condesales.models.User;
 import br.com.condesales.tasks.users.UserImageRequest;
 
 import com.sessionm.api.BaseActivity;
-import com.sessionm.api.SessionM;
 import com.sessionm.api.SessionM.ActivityType;
+
 
 public class MainActivity extends BaseActivity implements
         AccessTokenRequestListener, ImageRequestListener {
@@ -44,11 +46,17 @@ public class MainActivity extends BaseActivity implements
     private String[] mListTitles;
 
     private static EasyFoursquareAsync async;
+    
+    private static com.sessionm.api.ext.SessionM sessionM;
+    private static final String SESSIONM_APP_KEY = "aba6ba56b63680cad063e987df52a71e620dbc77";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        sessionM = com.sessionm.api.ext.SessionM.getInstance();
+
         mTitle = mDrawerTitle = getTitle();
         mListTitles = getResources().getStringArray(R.array.lists_array);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -93,8 +101,8 @@ public class MainActivity extends BaseActivity implements
         }
 
         // ask for access
-        async = new EasyFoursquareAsync(this);
-        async.requestAccess(this);
+        //async = new EasyFoursquareAsync(this);
+        //async.requestAccess(this);
     }
 
     @Override
@@ -203,19 +211,24 @@ public class MainActivity extends BaseActivity implements
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
             int i = getArguments().getInt(ARG_NUMBER);
-            View rootView = inflater.inflate(R.layout.activity_account,
+            View rootView = inflater.inflate(R.layout.activity_main,
                     container, false);
             switch (i) {
             case 1:
-                Intent i2 = new Intent(this.getActivity(), VenuesActivity.class);
-                startActivity(i2);
+                Intent i1 = new Intent(this.getActivity(), VenuesActivity.class);
+                startActivity(i1);
                 break;
             case 2:
-                SessionM.getInstance().presentActivity(ActivityType.PORTAL);
+                Intent i2 = new Intent(this.getActivity(), MPLACESActivity.class);
+                startActivity(i2);
                 break;
             case 3:
-                Intent i1 = new Intent(this.getActivity(), AccountActivity.class);
-                startActivity(i1);
+                String portalButtonPath = String.format(Locale.US, "apps/%s/mplaces/ads", SESSIONM_APP_KEY);
+                sessionM.presentActivity(ActivityType.PORTAL, portalButtonPath);
+                break;
+            case 4:
+                Intent i3 = new Intent(this.getActivity(), AccountActivity.class);
+                startActivity(i3);
                 break;
             default:
                 break;

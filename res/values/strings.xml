@@ -5,8 +5,9 @@
 
     <string-array name="lists_array">
         <item>Home</item>
-        <item>Venues</item>
-        <item>mPlaces</item>
+        <item>Foursquare</item>
+        <item>mPLACES</item>
+        <item>mPoints</item>
         <item>Account</item>
     </string-array>
 
@@ -28,5 +29,8 @@
     <string name="venue_herenow">HereNow</string>
     <string name="check_in">Check In</string>
     <string name="title_activity_tips">TipsActivity</string>
+    <string name="title_activity_mplaces">MPlacesActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 
 </resources>

@@ -3,13 +3,13 @@ package com.zlei.checkInTool;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import br.com.condesales.EasyFoursquareAsync;
 import br.com.condesales.criterias.CheckInCriteria;
 import br.com.condesales.listeners.CheckInListener;
 import br.com.condesales.models.Checkin;
@@ -22,6 +22,7 @@ public class CheckInActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_check_in);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
         
         Intent intent = getIntent();
         currentVenue = VenuesActivity.getNearbyVenues().get(intent.getIntExtra("selectedVenue", 0));
@@ -42,7 +43,11 @@ public class CheckInActivity extends Activity {
         checkin_btn.setOnClickListener(new OnClickListener(){
             @Override
             public void onClick(View v) {
-                checkin(currentVenue.getId());
+                EasyFoursquareAsync async = AccountActivity.getAsync();
+                if(async != null)
+                    checkin(currentVenue.getId());
+                else
+                    Toast.makeText(CheckInActivity.this, "Log in first!", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -75,19 +80,13 @@ public class CheckInActivity extends Activity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.check_in, menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
+        if (id == android.R.id.home){
+            this.finish();
             return true;
         }
         return super.onOptionsItemSelected(item);
