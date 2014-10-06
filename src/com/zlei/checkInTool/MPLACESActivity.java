@@ -30,7 +30,7 @@ import java.util.ArrayList;
 public class MPLACESActivity extends ListActivity {
 
     private static ArrayList<MVenues> venues = new ArrayList<MVenues>();
-    ArrayList<String> venueNames = new ArrayList<String>();
+    public static ArrayList<String> venueNames = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

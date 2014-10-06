@@ -74,7 +74,7 @@ public class VenuesActivity extends ListActivity implements
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         String provider = locationManager.getBestProvider(criteria, false);
-        Location location = locationManager.getLastKnownLocation(provider);
+        Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         if (location != null) {
             if (!isAccurate) {
                 location.setLatitude(location.getLatitude() + this.generateErrorNumber());

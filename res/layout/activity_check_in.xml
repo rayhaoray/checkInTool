@@ -12,10 +12,10 @@
         android:id="@+id/check_in_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/check_in"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="21dp"
-        android:text="@string/check_in" />
+        android:layout_marginBottom="51dp" />
 
     <TextView
         android:id="@+id/venue_name"
@@ -71,5 +71,14 @@
         android:layout_below="@+id/venue_location"
         android:layout_marginTop="25dp"
         android:text="@string/venue_herenow" />
+
+    <Button
+        android:id="@+id/go_mplaces_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/go_mplaces_check_in"
+        android:clickable="false"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

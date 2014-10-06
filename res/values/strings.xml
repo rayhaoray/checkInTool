@@ -28,9 +28,8 @@
     <string name="venue_stats">Stats</string>
     <string name="venue_herenow">HereNow</string>
     <string name="check_in">Check In</string>
+    <string name="go_mplaces_check_in">Check In MPlaces</string>
     <string name="title_activity_tips">TipsActivity</string>
     <string name="title_activity_mplaces">MPlacesActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
 
 </resources>

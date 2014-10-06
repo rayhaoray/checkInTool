@@ -33,7 +33,8 @@ public class CheckInActivity extends Activity {
         TextView venueHereNow_text = (TextView) this.findViewById(R.id.venue_herenow);
         TextView venueStats_text = (TextView) this.findViewById(R.id.venue_stats);
         Button checkin_btn = (Button) this.findViewById(R.id.check_in_button);
-        
+        Button go_mplaces_btn = (Button) this.findViewById(R.id.go_mplaces_button);
+
         venueName_text.setText(currentVenue.getName());
         venueId_text.setText(currentVenue.getId());
         //venueMajor_text.setText(currentVenue.getMayor().getUser().getBio());
@@ -44,12 +45,27 @@ public class CheckInActivity extends Activity {
             @Override
             public void onClick(View v) {
                 EasyFoursquareAsync async = AccountActivity.getAsync();
-                if(async != null)
-                    checkin(currentVenue.getId());
-                else
-                    Toast.makeText(CheckInActivity.this, "Log in first!", Toast.LENGTH_LONG).show();
+                //if(async != null)
+                    //checkin(currentVenue.getId());
+                //else
+                    //Toast.makeText(CheckInActivity.this, "Log in first!", Toast.LENGTH_LONG).show();
             }
         });
+        if(MPLACESActivity.venueNames.contains(currentVenue.getName())){
+            Toast.makeText(CheckInActivity.this, "MPlaces Check In Available!", Toast.LENGTH_LONG).show();
+            go_mplaces_btn.setClickable(true);
+            go_mplaces_btn.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent i = new Intent(CheckInActivity.this, MCheckInActivity.class);
+                    i.putExtra("selectedVenue", MPLACESActivity.venueNames.indexOf(currentVenue.getName()));
+                    startActivity(i);
+                }
+            });
+        }
+        else
+            Toast.makeText(CheckInActivity.this, "No!", Toast.LENGTH_LONG).show();
+
     }
     
     private void checkin(String venueId) {

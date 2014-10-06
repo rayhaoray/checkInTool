@@ -101,8 +101,8 @@ public class MainActivity extends BaseActivity implements
         }
 
         // ask for access
-        //async = new EasyFoursquareAsync(this);
-        //async.requestAccess(this);
+        async = new EasyFoursquareAsync(this);
+        async.requestAccess(this);
     }
 
     @Override
