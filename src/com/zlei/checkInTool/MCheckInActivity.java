@@ -2,12 +2,28 @@ package com.zlei.checkInTool;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.webkit.CookieManager;
 import android.widget.Button;
 import android.widget.TextView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class MCheckInActivity extends Activity {
 
@@ -38,12 +54,15 @@ public class MCheckInActivity extends Activity {
         checkin_btn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                //checkin(currentVenue.getId());
+                checkin();
             }
         });
     }
 
-    private void checkin(String venueId) {
+    private void checkin() {
+        String url = "https://api.sessionm.com/apps/aba6ba56b63680cad063e987df52a71e620dbc77" +
+                "/mplaces/ads/check_in.json?placement_id=mplaces";
+        new checkInTask().execute(url);
     }
 
     @Override
@@ -57,5 +76,80 @@ public class MCheckInActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private class checkInTask extends AsyncTask<String, Void, String> {
+        String request;
+        protected String doInBackground(String... url) {
+            try {
+                URL u = new URL(url[0]);
+                int timeout = 4000;
+                HttpURLConnection c = (HttpURLConnection) u.openConnection();
+                c.setRequestMethod("POST");
+                c.setRequestProperty("Accept", "application/json");
+                c.setRequestProperty("Content-type", "application/json");
+                c.setUseCaches(true);
+                c.setDoInput(true);
+                c.setDoOutput(true);
+                String cookieString = CookieManager.getInstance().getCookie(url[0]);
+                c.setRequestProperty("Cookie", cookieString);
+                c.setAllowUserInteraction(false);
+                c.setConnectTimeout(timeout);
+                c.setReadTimeout(timeout);
+                JSONObject location = new JSONObject();
+                JSONObject venue = new JSONObject();
+                JSONObject params = new JSONObject();
+                try {
+                    location.put("latitude", currentVenue.getLat());
+                    location.put("longitude", currentVenue.getLng());
+                    venue.put("id", currentVenue.getID());
+                    venue.put("state", currentVenue.getState());
+                    venue.put("name", currentVenue.getName());
+                    venue.put("distance", currentVenue.getDistance());
+                    venue.put("brand_id", currentVenue.getBrandID());
+                    venue.put("family_id", "");
+                    venue.put("primary_category_id", currentVenue.getCategoryID());
+                    params.put("app_id", "aba6ba56b63680cad063e987df52a71e620dbc77");
+                    params.put("venue", venue);
+                    params.put("format", "json");
+                    params.put("coordinates", location);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                OutputStream os = new BufferedOutputStream(c.getOutputStream());
+                os.write((params.toString()).getBytes("UTF-8"));
+                request = params.toString();
+                os.flush();
+                os.close();
+                c.connect();
+                int status = c.getResponseCode();
+                switch (status) {
+                    case 200:
+                    case 201:
+                        BufferedReader br = new BufferedReader(new InputStreamReader(c.getInputStream()));
+
+                        StringBuilder sb = new StringBuilder();
+                        String line;
+                        while ((line = br.readLine()) != null) {
+                            sb.append(line + "\n");
+                        }
+                        br.close();
+                        try {
+                            JSONObject response = new JSONObject(sb.toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        return sb.toString();
+                }
+            } catch (MalformedURLException ex) {
+            } catch (IOException ex) {
+            }
+            return null;
+        }
+
+        protected void onPostExecute(String result) {
+            Log.i("places_request: ", request);
+            Log.i("places_response: ", result);
+        }
     }
 }

@@ -62,6 +62,14 @@ public class MVenues extends JSONObject {
         }
         return "";
     }
+    public String getDistance() {
+        try {
+            return venue.getString("distance");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
     public String getDistanceLabel() {
         try {
             return venue.getString("distance_label");
@@ -107,6 +115,15 @@ public class MVenues extends JSONObject {
     public String getAddress() {
         try {
             return venue.getJSONObject("location").getString("address");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public String getCategoryID() {
+        try {
+            return venue.getString("primary_category_id");
         } catch (JSONException e) {
             e.printStackTrace();
         }
