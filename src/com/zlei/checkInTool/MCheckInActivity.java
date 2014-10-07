@@ -12,7 +12,6 @@ import android.webkit.CookieManager;
 import android.widget.Button;
 import android.widget.TextView;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -32,18 +31,18 @@ public class MCheckInActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_check_in);
+        setContentView(R.layout.activity_mplaces_check_in);
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
         currentVenue = MPLACESActivity.getVenues().get(intent.getIntExtra("selectedVenue", 0));
-        TextView venueName_text = (TextView) this.findViewById(R.id.venue_name);
-        TextView venueId_text = (TextView) this.findViewById(R.id.venue_id);
-        TextView venueMajor_text = (TextView) this.findViewById(R.id.venue_major);
-        TextView venueLocation_text = (TextView) this.findViewById(R.id.venue_location);
-        TextView venueHereNow_text = (TextView) this.findViewById(R.id.venue_herenow);
-        TextView venueStats_text = (TextView) this.findViewById(R.id.venue_stats);
-        Button checkin_btn = (Button) this.findViewById(R.id.check_in_button);
+        TextView venueName_text = (TextView) this.findViewById(R.id.mplaces_venue_name);
+        TextView venueId_text = (TextView) this.findViewById(R.id.mplaces_venue_id);
+        TextView venueMajor_text = (TextView) this.findViewById(R.id.mplaces_venue_major);
+        TextView venueLocation_text = (TextView) this.findViewById(R.id.mplaces_venue_location);
+        TextView venueHereNow_text = (TextView) this.findViewById(R.id.mplaces_venue_herenow);
+        TextView venueStats_text = (TextView) this.findViewById(R.id.mplaces_venue_stats);
+        Button checkin_btn = (Button) this.findViewById(R.id.mplaces_check_in_button);
 
         venueName_text.setText(currentVenue.getName());
         venueId_text.setText(currentVenue.getName());
@@ -60,7 +59,7 @@ public class MCheckInActivity extends Activity {
     }
 
     private void checkin() {
-        String url = "https://api.sessionm.com/apps/aba6ba56b63680cad063e987df52a71e620dbc77" +
+        String url = "http://m.s.sessionm.com/apps/aba6ba56b63680cad063e987df52a71e620dbc77" +
                 "/mplaces/ads/check_in.json?placement_id=mplaces";
         new checkInTask().execute(url);
     }
@@ -102,6 +101,7 @@ public class MCheckInActivity extends Activity {
                 try {
                     location.put("latitude", currentVenue.getLat());
                     location.put("longitude", currentVenue.getLng());
+                    location.put("accuracy", 0);
                     venue.put("id", currentVenue.getID());
                     venue.put("state", currentVenue.getState());
                     venue.put("name", currentVenue.getName());
@@ -123,6 +123,7 @@ public class MCheckInActivity extends Activity {
                 os.close();
                 c.connect();
                 int status = c.getResponseCode();
+                Log.i("SessionM places_code", status + c.getResponseMessage());
                 switch (status) {
                     case 200:
                     case 201:
@@ -142,14 +143,18 @@ public class MCheckInActivity extends Activity {
                         return sb.toString();
                 }
             } catch (MalformedURLException ex) {
+                Log.i("SessionM places_error: ", ex.toString());
             } catch (IOException ex) {
+                Log.i("SessionM places_error: ", ex.toString());
             }
             return null;
         }
 
         protected void onPostExecute(String result) {
-            Log.i("places_request: ", request);
-            Log.i("places_response: ", result);
+            Log.i("SessionM places_request: ", request);
+            if(result != null) {
+                Log.i("SessionM places_response: ", result);
+            }
         }
     }
 }

@@ -4,6 +4,7 @@ dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
     compile project(':easyFoursquare4Android:easyFoursquare4Android')
     compile project(':ActionBar-PullToRefresh:library:src:main')
+    compile files('libs/SessionM.1.9.13.jar')
 }
 
 android {

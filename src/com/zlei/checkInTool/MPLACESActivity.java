@@ -25,16 +25,19 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class MPLACESActivity extends ListActivity {
 
     private static ArrayList<MVenues> venues = new ArrayList<MVenues>();
     public static ArrayList<String> venueNames = new ArrayList<String>();
+    public static ArrayList<String[]> venueCoordinates = new ArrayList<String[]>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_mplaces);
     }
 
@@ -96,7 +99,7 @@ public class MPLACESActivity extends ListActivity {
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         String item = (String) getListAdapter().getItem(position);
-        Toast.makeText(this, item + " selected", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, item + " selected", Toast.LENGTH_SHORT).show();
         if (venues.get(position).getState().equals("checkable")) {
             Intent intent = new Intent(this, MCheckInActivity.class);
             intent.putExtra("selectedVenue", position);
@@ -112,14 +115,15 @@ public class MPLACESActivity extends ListActivity {
     private void requestVenuesNearby() {
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         Criteria criteria = new Criteria();
-        String provider = locationManager.getBestProvider(criteria, false);
-        Location location = locationManager.getLastKnownLocation(provider);
-        String url = "https://api.sessionm.com/apps/aba6ba56b63680cad063e987df52a71e620dbc77/mplaces/ads/fetch" +
-                "?coordinates[latitude]=42.3493505&coordinates[longitude]=-71.0492305&coordinates[accuracy]=10";
-        if (location != null) {
+        //String provider = locationManager.getBestProvider(criteria, false);
+        Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        //Location location = locationManager.getLastKnownLocation(provider);
+        String url = "http://m.s.sessionm.com/apps/aba6ba56b63680cad063e987df52a71e620dbc77/mplaces/ads/fetch" +
+                "?coordinates[latitude]=42.3523505&coordinates[longitude]=-71.0692305&coordinates[accuracy]=10";
+        if (location == null) {
             double lat = location.getLatitude();
             double lng = location.getLongitude();
-            url = "https://api.sessionm.com/apps/aba6ba56b63680cad063e987df52a71e620dbc77/mplaces/ads/fetch?coordinates" +
+            url = "http://m.s.sessionm.com/apps/aba6ba56b63680cad063e987df52a71e620dbc77/mplaces/ads/fetch?coordinates" +
                     "[latitude]=" + lat + "&coordinates[longitude]=" + lng + "&coordinates[accuracy]=10";
             Toast.makeText(this, "Update!!", Toast.LENGTH_SHORT).show();
         }
@@ -127,12 +131,18 @@ public class MPLACESActivity extends ListActivity {
     }
 
     private void setNearbyVenues(JSONArray jsonArray) {
+        DecimalFormat df=new DecimalFormat("0.000");
+        String[] coordinates;
         if (jsonArray != null) {
             for (int i = 0; i < jsonArray.length(); i++) {
                 try {
+                    coordinates = new String[2];
                     MVenues venue = new MVenues((JSONObject) jsonArray.get(i));
                     venues.add(i, venue);
                     venueNames.add(i, venue.getName());
+                    coordinates[0] = df.format(Double.valueOf(venue.getLat()));
+                    coordinates[1] = df.format(Double.valueOf(venue.getLng()));
+                    venueCoordinates.add(i, coordinates);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

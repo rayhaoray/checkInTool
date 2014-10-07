@@ -61,7 +61,7 @@ public class VenuesActivity extends ListActivity implements
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         String item = (String) getListAdapter().getItem(position);
-        Toast.makeText(this, item + " selected", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, item + " selected", Toast.LENGTH_SHORT).show();
         Venue selectedVenue = venues.get(position);
         if (async != null) {
             Intent intent = new Intent(VenuesActivity.this, CheckInActivity.class);

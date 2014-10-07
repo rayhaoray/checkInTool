@@ -32,6 +32,7 @@ import br.com.condesales.tasks.users.UserImageRequest;
 
 import com.sessionm.api.BaseActivity;
 import com.sessionm.api.SessionM.ActivityType;
+import com.sessionm.core.Config;
 
 
 public class MainActivity extends BaseActivity implements
@@ -56,6 +57,10 @@ public class MainActivity extends BaseActivity implements
         setContentView(R.layout.activity_main);
         
         sessionM = com.sessionm.api.ext.SessionM.getInstance();
+
+        Config config = sessionM.getConfig();
+        Config.ServerType type = Config.ServerType.ar;
+        config.setServerType(type);
 
         mTitle = mDrawerTitle = getTitle();
         mListTitles = getResources().getStringArray(R.array.lists_array);
@@ -223,8 +228,9 @@ public class MainActivity extends BaseActivity implements
                 startActivity(i2);
                 break;
             case 3:
-                String portalButtonPath = String.format(Locale.US, "apps/%s/mplaces/ads", SESSIONM_APP_KEY);
-                sessionM.presentActivity(ActivityType.PORTAL, portalButtonPath);
+                //String portalButtonPath = String.format(Locale.US, "apps/%s/mplaces/ads", SESSIONM_APP_KEY);
+                //sessionM.presentActivity(ActivityType.PORTAL, portalButtonPath);
+                sessionM.presentActivity(ActivityType.PORTAL);
                 break;
             case 4:
                 Intent i3 = new Intent(this.getActivity(), AccountActivity.class);

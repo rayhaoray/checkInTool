@@ -3,12 +3,16 @@ package com.zlei.checkInTool;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.text.DecimalFormat;
+
 import br.com.condesales.EasyFoursquareAsync;
 import br.com.condesales.criterias.CheckInCriteria;
 import br.com.condesales.listeners.CheckInListener;
@@ -51,14 +55,22 @@ public class CheckInActivity extends Activity {
                     //Toast.makeText(CheckInActivity.this, "Log in first!", Toast.LENGTH_LONG).show();
             }
         });
-        if(MPLACESActivity.venueNames.contains(currentVenue.getName())){
+
+        DecimalFormat df=new DecimalFormat("0.000");
+        String curLat = df.format(currentVenue.getLocation().getLat());
+        String curLng = df.format(currentVenue.getLocation().getLng());
+        final String[] curCoor = new String[2];
+        curCoor[0] = curLat;
+        curCoor[1] = curLng;
+        if(MPLACESActivity.venueNames.contains(currentVenue.getName()) || MPLACESActivity.venueCoordinates.contains(curCoor)){
             Toast.makeText(CheckInActivity.this, "MPlaces Check In Available!", Toast.LENGTH_LONG).show();
-            go_mplaces_btn.setClickable(true);
+            go_mplaces_btn.setVisibility(View.VISIBLE);
             go_mplaces_btn.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent i = new Intent(CheckInActivity.this, MCheckInActivity.class);
-                    i.putExtra("selectedVenue", MPLACESActivity.venueNames.indexOf(currentVenue.getName()));
+                    //i.putExtra("selectedVenue", MPLACESActivity.venueNames.indexOf(currentVenue.getName()));
+                    i.putExtra("selectedVenue", MPLACESActivity.venueCoordinates.indexOf(curCoor));
                     startActivity(i);
                 }
             });

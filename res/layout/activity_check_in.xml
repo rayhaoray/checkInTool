@@ -67,18 +67,18 @@
         android:id="@+id/venue_herenow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/venue_stats"
-        android:layout_below="@+id/venue_location"
-        android:layout_marginTop="25dp"
-        android:text="@string/venue_herenow" />
+        android:text="@string/venue_herenow"
+        android:layout_centerVertical="true"
+        android:layout_alignRight="@+id/venue_location"
+        android:layout_alignEnd="@+id/venue_location" />
 
     <Button
         android:id="@+id/go_mplaces_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/go_mplaces_check_in"
-        android:clickable="false"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:visibility="gone" />
 
 </RelativeLayout>
