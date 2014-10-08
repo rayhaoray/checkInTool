@@ -9,6 +9,7 @@
         <item>mPLACES</item>
         <item>mPoints</item>
         <item>Account</item>
+        <item>Map</item>
     </string-array>
 
     <string name="drawer_open">Open navigation drawer</string>
@@ -31,5 +32,6 @@
     <string name="go_mplaces_check_in">Check In MPlaces</string>
     <string name="title_activity_tips">TipsActivity</string>
     <string name="title_activity_mplaces">MPlacesActivity</string>
+    <string name="title_activity_map">MapActivity</string>
 
 </resources>

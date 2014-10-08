@@ -3,7 +3,6 @@ package com.zlei.checkInTool;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -59,18 +58,19 @@ public class CheckInActivity extends Activity {
         DecimalFormat df=new DecimalFormat("0.000");
         String curLat = df.format(currentVenue.getLocation().getLat());
         String curLng = df.format(currentVenue.getLocation().getLng());
-        final String[] curCoor = new String[2];
+        final String[] curCoor = new String[3];
         curCoor[0] = curLat;
         curCoor[1] = curLng;
-        if(MPLACESActivity.venueNames.contains(currentVenue.getName()) || MPLACESActivity.venueCoordinates.contains(curCoor)){
+        curCoor[2] = "checkable";
+        if(MVenuesActivity.venueNames.contains(currentVenue.getName()) || MVenuesActivity.venueCoordinates.contains(curCoor)){
             Toast.makeText(CheckInActivity.this, "MPlaces Check In Available!", Toast.LENGTH_LONG).show();
             go_mplaces_btn.setVisibility(View.VISIBLE);
             go_mplaces_btn.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent i = new Intent(CheckInActivity.this, MCheckInActivity.class);
-                    //i.putExtra("selectedVenue", MPLACESActivity.venueNames.indexOf(currentVenue.getName()));
-                    i.putExtra("selectedVenue", MPLACESActivity.venueCoordinates.indexOf(curCoor));
+                    i.putExtra("selectedVenue", MVenuesActivity.venueNames.indexOf(currentVenue.getName()));
+                    //i.putExtra("selectedVenue", MVenuesActivity.venueCoordinates.indexOf(curCoor));
                     startActivity(i);
                 }
             });

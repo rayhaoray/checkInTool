@@ -11,6 +11,7 @@ import android.view.View.OnClickListener;
 import android.webkit.CookieManager;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,6 +28,7 @@ import java.net.URL;
 public class MCheckInActivity extends Activity {
 
     private MVenues currentVenue;
+    private boolean isSuccess;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +37,7 @@ public class MCheckInActivity extends Activity {
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
-        currentVenue = MPLACESActivity.getVenues().get(intent.getIntExtra("selectedVenue", 0));
+        currentVenue = MVenuesActivity.getVenues().get(intent.getIntExtra("selectedVenue", 0));
         TextView venueName_text = (TextView) this.findViewById(R.id.mplaces_venue_name);
         TextView venueId_text = (TextView) this.findViewById(R.id.mplaces_venue_id);
         TextView venueMajor_text = (TextView) this.findViewById(R.id.mplaces_venue_major);
@@ -126,7 +128,6 @@ public class MCheckInActivity extends Activity {
                 Log.i("SessionM places_code", status + c.getResponseMessage());
                 switch (status) {
                     case 200:
-                    case 201:
                         BufferedReader br = new BufferedReader(new InputStreamReader(c.getInputStream()));
 
                         StringBuilder sb = new StringBuilder();
@@ -137,6 +138,8 @@ public class MCheckInActivity extends Activity {
                         br.close();
                         try {
                             JSONObject response = new JSONObject(sb.toString());
+                            Log.i("SessionM response JSON", response.toString());
+                            isSuccess = response.get("success").equals(true);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -152,9 +155,11 @@ public class MCheckInActivity extends Activity {
 
         protected void onPostExecute(String result) {
             Log.i("SessionM places_request: ", request);
-            if(result != null) {
-                Log.i("SessionM places_response: ", result);
-            }
+            if(result != null && isSuccess)
+                Toast.makeText(MCheckInActivity.this, "Done!", Toast.LENGTH_LONG).show();
+            else
+                Toast.makeText(MCheckInActivity.this, "Error!", Toast.LENGTH_LONG).show();
+            finish();
         }
     }
 }

@@ -28,7 +28,7 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-public class MPLACESActivity extends ListActivity {
+public class MVenuesActivity extends ListActivity {
 
     private static ArrayList<MVenues> venues = new ArrayList<MVenues>();
     public static ArrayList<String> venueNames = new ArrayList<String>();
@@ -67,7 +67,6 @@ public class MPLACESActivity extends ListActivity {
                 int status = c.getResponseCode();
                 switch (status) {
                     case 200:
-                    case 201:
                         BufferedReader br = new BufferedReader(new InputStreamReader(c.getInputStream()));
 
                         StringBuilder sb = new StringBuilder();
@@ -91,7 +90,7 @@ public class MPLACESActivity extends ListActivity {
         }
 
         protected void onPostExecute(String result) {
-            Log.i("places", venuesJA.toString());
+            //Log.i("places", venuesJA.toString());
             setNearbyVenues(venuesJA);
         }
     }
@@ -120,7 +119,7 @@ public class MPLACESActivity extends ListActivity {
         //Location location = locationManager.getLastKnownLocation(provider);
         String url = "http://m.s.sessionm.com/apps/aba6ba56b63680cad063e987df52a71e620dbc77/mplaces/ads/fetch" +
                 "?coordinates[latitude]=42.3523505&coordinates[longitude]=-71.0692305&coordinates[accuracy]=10";
-        if (location == null) {
+        if (location != null) {
             double lat = location.getLatitude();
             double lng = location.getLongitude();
             url = "http://m.s.sessionm.com/apps/aba6ba56b63680cad063e987df52a71e620dbc77/mplaces/ads/fetch?coordinates" +
@@ -136,12 +135,13 @@ public class MPLACESActivity extends ListActivity {
         if (jsonArray != null) {
             for (int i = 0; i < jsonArray.length(); i++) {
                 try {
-                    coordinates = new String[2];
+                    coordinates = new String[3];
                     MVenues venue = new MVenues((JSONObject) jsonArray.get(i));
                     venues.add(i, venue);
                     venueNames.add(i, venue.getName());
                     coordinates[0] = df.format(Double.valueOf(venue.getLat()));
                     coordinates[1] = df.format(Double.valueOf(venue.getLng()));
+                    coordinates[2] = venue.getState();
                     venueCoordinates.add(i, coordinates);
                 } catch (JSONException e) {
                     e.printStackTrace();

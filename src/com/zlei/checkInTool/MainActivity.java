@@ -1,7 +1,5 @@
 package com.zlei.checkInTool;
 
-import java.util.Locale;
-
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
@@ -102,7 +100,7 @@ public class MainActivity extends BaseActivity implements
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         if (savedInstanceState == null) {
-            selectItem(0);
+            selectItem(2);
         }
 
         // ask for access
@@ -224,7 +222,7 @@ public class MainActivity extends BaseActivity implements
                 startActivity(i1);
                 break;
             case 2:
-                Intent i2 = new Intent(this.getActivity(), MPLACESActivity.class);
+                Intent i2 = new Intent(this.getActivity(), MVenuesActivity.class);
                 startActivity(i2);
                 break;
             case 3:
@@ -235,6 +233,10 @@ public class MainActivity extends BaseActivity implements
             case 4:
                 Intent i3 = new Intent(this.getActivity(), AccountActivity.class);
                 startActivity(i3);
+                break;
+            case 5:
+                Intent i4 = new Intent(this.getActivity(), MapActivity.class);
+                startActivity(i4);
                 break;
             default:
                 break;
