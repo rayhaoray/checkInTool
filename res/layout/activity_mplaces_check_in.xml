@@ -31,7 +31,7 @@
         android:id="@+id/mplaces_venue_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/mplaces_venue_name"
+        android:layout_below="@+id/mplaces_venue_icon"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
         android:text="@string/venue_id" />
@@ -67,9 +67,17 @@
         android:id="@+id/mplaces_venue_herenow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/mplaces_venue_stats"
+        android:layout_centerHorizontal="true"
         android:layout_below="@+id/mplaces_venue_location"
         android:layout_marginTop="25dp"
         android:text="@string/venue_herenow" />
+
+    <ImageView
+        android:id="@+id/mplaces_venue_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_launcher"
+        android:layout_below="@+id/mplaces_venue_name"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

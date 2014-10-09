@@ -2,6 +2,8 @@ package com.zlei.checkInTool;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.media.Image;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +12,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.CookieManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,13 +40,15 @@ public class MCheckInActivity extends Activity {
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
-        currentVenue = MVenuesActivity.getVenues().get(intent.getIntExtra("selectedVenue", 0));
+        int position = intent.getIntExtra("selectedVenue", 0);
+        currentVenue = MVenuesActivity.getVenues().get(position);
         TextView venueName_text = (TextView) this.findViewById(R.id.mplaces_venue_name);
         TextView venueId_text = (TextView) this.findViewById(R.id.mplaces_venue_id);
         TextView venueMajor_text = (TextView) this.findViewById(R.id.mplaces_venue_major);
         TextView venueLocation_text = (TextView) this.findViewById(R.id.mplaces_venue_location);
         TextView venueHereNow_text = (TextView) this.findViewById(R.id.mplaces_venue_herenow);
         TextView venueStats_text = (TextView) this.findViewById(R.id.mplaces_venue_stats);
+        ImageView venueImage = (ImageView) this.findViewById(R.id.mplaces_venue_icon);
         Button checkin_btn = (Button) this.findViewById(R.id.mplaces_check_in_button);
 
         venueName_text.setText(currentVenue.getName());
@@ -51,6 +56,8 @@ public class MCheckInActivity extends Activity {
         venueLocation_text.setText("Lat: " + currentVenue.getLat() + "\nLng: " + currentVenue.getLng());
         //venueMajor_text.setText(currentVenue.getMayor().getUser().getBio());
         venueHereNow_text.setText(currentVenue.getAddress());
+        if(!MVenuesActivity.venueIcons.isEmpty())
+            venueImage.setImageDrawable(MVenuesActivity.venueIcons.get(position));
         //venueStats_text.setText(getStats(currentVenue));
         checkin_btn.setOnClickListener(new OnClickListener() {
             @Override

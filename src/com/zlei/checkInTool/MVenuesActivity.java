@@ -1,18 +1,24 @@
 package com.zlei.checkInTool;
 
 import android.app.ListActivity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.CookieManager;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -21,6 +27,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -33,12 +40,21 @@ public class MVenuesActivity extends ListActivity {
     private static ArrayList<MVenues> venues = new ArrayList<MVenues>();
     public static ArrayList<String> venueNames = new ArrayList<String>();
     public static ArrayList<String[]> venueCoordinates = new ArrayList<String[]>();
+    public static ArrayList<Drawable> venueIcons = new ArrayList<Drawable>();
+    private String[] venueUrls = new String[100];
+
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_mplaces);
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Loading...");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setIndeterminate(true);
+        progressDialog.show();
     }
 
     @Override
@@ -91,6 +107,7 @@ public class MVenuesActivity extends ListActivity {
 
         protected void onPostExecute(String result) {
             //Log.i("places", venuesJA.toString());
+            progressDialog.dismiss();
             setNearbyVenues(venuesJA);
         }
     }
@@ -130,7 +147,7 @@ public class MVenuesActivity extends ListActivity {
     }
 
     private void setNearbyVenues(JSONArray jsonArray) {
-        DecimalFormat df=new DecimalFormat("0.000");
+        DecimalFormat df = new DecimalFormat("0.000");
         String[] coordinates;
         if (jsonArray != null) {
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -143,14 +160,68 @@ public class MVenuesActivity extends ListActivity {
                     coordinates[1] = df.format(Double.valueOf(venue.getLng()));
                     coordinates[2] = venue.getState();
                     venueCoordinates.add(i, coordinates);
+                    if (venue.getState().equals("checkable"))
+                        venueUrls[i] = venue.getIconUrl();
+                    else
+                        venueUrls[i] = "";
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, venueNames);
+        new getIconsTask().execute(venueUrls);
+        MyArrayAdapter adapter = new MyArrayAdapter(this,
+                R.layout.venues_list_item, venueNames);
         setListAdapter(adapter);
+    }
+
+    public class MyArrayAdapter extends ArrayAdapter<String> {
+        private final int resource;
+        private final Context context;
+        private final ArrayList<String> objects;
+
+        public MyArrayAdapter(Context context, int resource, ArrayList<String> objects) {
+            super(context, resource, objects);
+            this.resource = resource;
+            this.context = context;
+            this.objects = objects;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            LayoutInflater inflater = (LayoutInflater) context
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View rowView = inflater.inflate(resource, parent,
+                    false);
+            TextView text_name = (TextView) rowView.findViewById(R.id.venue_list_name);
+            TextView text_desc = (TextView) rowView.findViewById(R.id.venue_list_desc);
+            ImageView imageView = (ImageView) rowView.findViewById(R.id.venue_icon);
+            text_name.setText(objects.get(position));
+            text_desc.setText(objects.get(position));
+            //if(!venueIcons.isEmpty())
+            //    imageView.setImageDrawable(venueIcons.get(position));
+            return rowView;
+        }
+    }
+
+    private class getIconsTask extends AsyncTask<String, Void, Void> {
+        @Override
+        protected Void doInBackground(String... strings) {
+            ArrayList<Drawable> icons = new ArrayList<Drawable>();
+            int i = 0;
+            for (String url : strings) {
+                if (url != null)
+                    try {
+                        InputStream is = (InputStream) new URL(url).getContent();
+                        Drawable d = Drawable.createFromStream(is, "src name");
+                        icons.add(i, d);
+                    } catch (Exception e) {
+                    }
+                i++;
+            }
+            venueIcons = icons;
+            return null;
+        }
     }
 
     public static ArrayList<MVenues> getVenues() {
