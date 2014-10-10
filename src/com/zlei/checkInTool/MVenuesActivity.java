@@ -134,13 +134,17 @@ public class MVenuesActivity extends ListActivity {
         //String provider = locationManager.getBestProvider(criteria, false);
         Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         //Location location = locationManager.getLastKnownLocation(provider);
-        String url = "http://m.s.sessionm.com/apps/aba6ba56b63680cad063e987df52a71e620dbc77/mplaces/ads/fetch" +
+        String url = "https://api.sessionm.com/apps/aba6ba56b63680cad063e987df52a71e620dbc77/mplaces/ads/fetch" +
                 "?coordinates[latitude]=42.3523505&coordinates[longitude]=-71.0692305&coordinates[accuracy]=10";
+        //String url = "http://m.s.sessionm.com/apps/aba6ba56b63680cad063e987df52a71e620dbc77/mplaces/ads/fetch" +
+        //        "?coordinates[latitude]=42.3523505&coordinates[longitude]=-71.0692305&coordinates[accuracy]=10";
         if (location != null) {
             double lat = location.getLatitude();
             double lng = location.getLongitude();
-            url = "http://m.s.sessionm.com/apps/aba6ba56b63680cad063e987df52a71e620dbc77/mplaces/ads/fetch?coordinates" +
+            url = "https://api.sessionm.com/apps/aba6ba56b63680cad063e987df52a71e620dbc77/mplaces/ads/fetch?coordinates" +
                     "[latitude]=" + lat + "&coordinates[longitude]=" + lng + "&coordinates[accuracy]=10";
+            //url = "http://m.s.sessionm.com/apps/aba6ba56b63680cad063e987df52a71e620dbc77/mplaces/ads/fetch?coordinates" +
+            //        "[latitude]=" + lat + "&coordinates[longitude]=" + lng + "&coordinates[accuracy]=10";
             Toast.makeText(this, "Update!!", Toast.LENGTH_SHORT).show();
         }
         new getVenuesTask().execute(url);

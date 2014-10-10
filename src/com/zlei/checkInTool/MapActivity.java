@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -32,36 +33,38 @@ public class MapActivity extends Activity implements GoogleMap.OnInfoWindowClick
 
         map.setOnInfoWindowClickListener(this);
 
-        if (MVenuesActivity.venueNames != null) {
+        if (!MVenuesActivity.venueNames.isEmpty()) {
             venueNames = MVenuesActivity.venueNames;
             venueCoordinates = MVenuesActivity.venueCoordinates;
-        }
-        String[] coreCoor = venueCoordinates.get(0);
-        double coreLat = Double.valueOf(coreCoor[0]);
-        double coreLng = Double.valueOf(coreCoor[1]);
-        LatLng core = new LatLng(coreLat, coreLng);
+            String[] coreCoor = venueCoordinates.get(0);
+            double coreLat = Double.valueOf(coreCoor[0]);
+            double coreLng = Double.valueOf(coreCoor[1]);
+            LatLng core = new LatLng(coreLat, coreLng);
 
-        map.setMyLocationEnabled(true);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(core, 16));
+            map.setMyLocationEnabled(true);
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(core, 16));
 
-        for (String name : venueNames) {
-            int i = venueNames.indexOf(name);
-            coreCoor = venueCoordinates.get(i);
-            coreLat = Double.valueOf(coreCoor[0]);
-            coreLng = Double.valueOf(coreCoor[1]);
-            core = new LatLng(coreLat, coreLng);
-            if (coreCoor[2].equals("checkable")) {
-                map.addMarker(new MarkerOptions()
-                        .title(name)
-                        .snippet("Click to check in here!")
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-                        .position(core));
-            } else {
-                map.addMarker(new MarkerOptions()
-                        .title(name)
-                        .position(core));
+            for (String name : venueNames) {
+                int i = venueNames.indexOf(name);
+                coreCoor = venueCoordinates.get(i);
+                coreLat = Double.valueOf(coreCoor[0]);
+                coreLng = Double.valueOf(coreCoor[1]);
+                core = new LatLng(coreLat, coreLng);
+                if (coreCoor[2].equals("checkable")) {
+                    map.addMarker(new MarkerOptions()
+                            .title(name)
+                            .snippet("Click to check in here!")
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+                            .position(core));
+                } else {
+                    map.addMarker(new MarkerOptions()
+                            .title(name)
+                            .position(core));
+                }
             }
         }
+        else
+            Toast.makeText(this, "Location Not Available!", Toast.LENGTH_LONG).show();
     }
 
     @Override

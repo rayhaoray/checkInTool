@@ -1,5 +1,6 @@
 package com.zlei.checkInTool;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
@@ -28,12 +29,12 @@ import br.com.condesales.listeners.UserInfoRequestListener;
 import br.com.condesales.models.User;
 import br.com.condesales.tasks.users.UserImageRequest;
 
-import com.sessionm.api.BaseActivity;
 import com.sessionm.api.SessionM.ActivityType;
+import com.sessionm.api.ext.SessionM;
 import com.sessionm.core.Config;
 
 
-public class MainActivity extends BaseActivity implements
+public class MainActivity extends Activity implements
         AccessTokenRequestListener, ImageRequestListener {
 
     private DrawerLayout mDrawerLayout;
@@ -47,7 +48,6 @@ public class MainActivity extends BaseActivity implements
     private static EasyFoursquareAsync async;
     
     private static com.sessionm.api.ext.SessionM sessionM;
-    private static final String SESSIONM_APP_KEY = "aba6ba56b63680cad063e987df52a71e620dbc77";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +57,8 @@ public class MainActivity extends BaseActivity implements
         sessionM = com.sessionm.api.ext.SessionM.getInstance();
 
         Config config = sessionM.getConfig();
-        Config.ServerType type = Config.ServerType.ar;
+        //ar for staging
+        Config.ServerType type = Config.ServerType.aq;
         config.setServerType(type);
 
         mTitle = mDrawerTitle = getTitle();
@@ -111,27 +112,27 @@ public class MainActivity extends BaseActivity implements
     @Override
     protected void onStart() {
         super.onStart();
+        SessionM.getInstance().onActivityStart(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        SessionM.getInstance().onActivityResume(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        SessionM.getInstance().onActivityPause(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        SessionM.getInstance().onActivityStop(this);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

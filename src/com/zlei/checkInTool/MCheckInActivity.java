@@ -68,8 +68,10 @@ public class MCheckInActivity extends Activity {
     }
 
     private void checkin() {
-        String url = "http://m.s.sessionm.com/apps/aba6ba56b63680cad063e987df52a71e620dbc77" +
+        String url = "https://api.sessionm.com/apps/aba6ba56b63680cad063e987df52a71e620dbc77" +
                 "/mplaces/ads/check_in.json?placement_id=mplaces";
+        //String url = "http://m.s.sessionm.com/apps/aba6ba56b63680cad063e987df52a71e620dbc77" +
+        //        "/mplaces/ads/check_in.json?placement_id=mplaces";
         new checkInTask().execute(url);
     }
 
