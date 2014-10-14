@@ -96,7 +96,7 @@ public class MVenues extends JSONObject {
     }
     public String getCategory() {
         try {
-            return venue.getJSONObject("categories").getString("name");
+            return venue.getJSONArray("categories").getJSONObject(0).getString("name");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -114,7 +114,9 @@ public class MVenues extends JSONObject {
 
     public String getAddress() {
         try {
-            return venue.getJSONObject("location").getString("address");
+            return venue.getJSONObject("location").getString("address") +
+                   venue.getJSONObject("location").getString("city") + ", " +
+                   venue.getJSONObject("location").getString("state") ;
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -54,11 +54,11 @@ public class MCheckInActivity extends Activity {
         venueName_text.setText(currentVenue.getName());
         venueId_text.setText(currentVenue.getName());
         venueLocation_text.setText("Lat: " + currentVenue.getLat() + "\nLng: " + currentVenue.getLng());
-        //venueMajor_text.setText(currentVenue.getMayor().getUser().getBio());
-        venueHereNow_text.setText(currentVenue.getAddress());
-        if(!MVenuesActivity.venueIcons.isEmpty())
+        venueMajor_text.setText("Category: " + currentVenue.getCategory());
+        venueHereNow_text.setText("Address: " + currentVenue.getAddress());
+        if(!MVenuesActivity.venueIcons.isEmpty() && position < MVenuesActivity.venueIcons.size())
             venueImage.setImageDrawable(MVenuesActivity.venueIcons.get(position));
-        //venueStats_text.setText(getStats(currentVenue));
+        venueStats_text.setText("mPOINTS: " + currentVenue.getPoints());
         checkin_btn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

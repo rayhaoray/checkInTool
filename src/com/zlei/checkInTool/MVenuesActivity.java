@@ -10,6 +10,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +21,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.sessionm.api.SessionM;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,9 +61,28 @@ public class MVenuesActivity extends ListActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        SessionM.getInstance().onActivityStart(this);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+        SessionM.getInstance().onActivityResume(this);
         updateData();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SessionM.getInstance().onActivityPause(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        SessionM.getInstance().onActivityStop(this);
     }
 
     private class getVenuesTask extends AsyncTask<String, Void, String> {
@@ -106,7 +128,7 @@ public class MVenuesActivity extends ListActivity {
         }
 
         protected void onPostExecute(String result) {
-            //Log.i("places", venuesJA.toString());
+            Log.i("places", venuesJA.toString());
             progressDialog.dismiss();
             setNearbyVenues(venuesJA);
         }

@@ -29,6 +29,8 @@ import br.com.condesales.listeners.UserInfoRequestListener;
 import br.com.condesales.models.User;
 import br.com.condesales.tasks.users.UserImageRequest;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.sessionm.api.SessionM.ActivityType;
 import com.sessionm.api.ext.SessionM;
 import com.sessionm.core.Config;
@@ -106,7 +108,7 @@ public class MainActivity extends Activity implements
 
         // ask for access
         async = new EasyFoursquareAsync(this);
-        async.requestAccess(this);
+        //async.requestAccess(this);
     }
 
     @Override

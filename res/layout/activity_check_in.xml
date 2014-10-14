@@ -6,7 +6,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.zlei.checkInTool.CheckInActivity" >
+    tools:context="com.zlei.checkInTool.CheckInActivity">
 
     <Button
         android:id="@+id/check_in_button"
@@ -42,7 +42,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/venue_id"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="30dp"
         android:text="@string/venue_major" />
 
     <TextView
@@ -60,7 +60,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/venue_herenow"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="30dp"
         android:text="@string/venue_stats" />
 
     <TextView
@@ -68,9 +68,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/venue_herenow"
-        android:layout_centerVertical="true"
-        android:layout_alignRight="@+id/venue_location"
-        android:layout_alignEnd="@+id/venue_location" />
+        android:layout_below="@+id/venue_location"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"/>
 
     <Button
         android:id="@+id/go_mplaces_button"
