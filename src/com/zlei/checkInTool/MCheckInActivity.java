@@ -16,6 +16,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -43,7 +50,7 @@ public class MCheckInActivity extends Activity {
         int position = intent.getIntExtra("selectedVenue", 0);
         currentVenue = MVenuesActivity.getVenues().get(position);
         TextView venueName_text = (TextView) this.findViewById(R.id.mplaces_venue_name);
-        TextView venueId_text = (TextView) this.findViewById(R.id.mplaces_venue_id);
+        //TextView venueId_text = (TextView) this.findViewById(R.id.mplaces_venue_id);
         TextView venueMajor_text = (TextView) this.findViewById(R.id.mplaces_venue_major);
         TextView venueLocation_text = (TextView) this.findViewById(R.id.mplaces_venue_location);
         TextView venueHereNow_text = (TextView) this.findViewById(R.id.mplaces_venue_herenow);
@@ -52,11 +59,11 @@ public class MCheckInActivity extends Activity {
         Button checkin_btn = (Button) this.findViewById(R.id.mplaces_check_in_button);
 
         venueName_text.setText(currentVenue.getName());
-        venueId_text.setText(currentVenue.getName());
+        //venueId_text.setText("Name: " + currentVenue.getName());
         venueLocation_text.setText("Lat: " + currentVenue.getLat() + "\nLng: " + currentVenue.getLng());
         venueMajor_text.setText("Category: " + currentVenue.getCategory());
         venueHereNow_text.setText("Address: " + currentVenue.getAddress());
-        if(!MVenuesActivity.venueIcons.isEmpty() && position < MVenuesActivity.venueIcons.size())
+        if (!MVenuesActivity.venueIcons.isEmpty() && position < MVenuesActivity.venueIcons.size())
             venueImage.setImageDrawable(MVenuesActivity.venueIcons.get(position));
         venueStats_text.setText("mPOINTS: " + currentVenue.getPoints());
         checkin_btn.setOnClickListener(new OnClickListener() {
@@ -65,6 +72,26 @@ public class MCheckInActivity extends Activity {
                 checkin();
             }
         });
+
+        // Get a handle to the Map Fragment
+        GoogleMap map = ((MapFragment) getFragmentManager()
+                .findFragmentById(R.id.map_venue)).getMap();
+
+        double coreLat = Double.valueOf(currentVenue.getLat());
+        double coreLng = Double.valueOf(currentVenue.getLng());
+        LatLng core = new LatLng(coreLat, coreLng);
+
+        map.setMyLocationEnabled(true);
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(core, 15));
+        map.getUiSettings().setZoomControlsEnabled(false);
+        map.getUiSettings().setAllGesturesEnabled(false);
+        map.getUiSettings().setMyLocationButtonEnabled(false);
+
+        map.addMarker(new MarkerOptions()
+                .title(currentVenue.getName())
+                .snippet("Click to check in here!")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+                .position(core));
     }
 
     private void checkin() {
@@ -90,6 +117,7 @@ public class MCheckInActivity extends Activity {
 
     private class checkInTask extends AsyncTask<String, Void, String> {
         String request;
+
         protected String doInBackground(String... url) {
             try {
                 URL u = new URL(url[0]);
@@ -164,7 +192,7 @@ public class MCheckInActivity extends Activity {
 
         protected void onPostExecute(String result) {
             Log.i("SessionM places_request: ", request);
-            if(result != null && isSuccess)
+            if (result != null && isSuccess)
                 Toast.makeText(MCheckInActivity.this, "Done!", Toast.LENGTH_LONG).show();
             else
                 Toast.makeText(MCheckInActivity.this, "Error!", Toast.LENGTH_LONG).show();

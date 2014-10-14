@@ -223,9 +223,7 @@ public class MVenuesActivity extends ListActivity {
             TextView text_desc = (TextView) rowView.findViewById(R.id.venue_list_desc);
             ImageView imageView = (ImageView) rowView.findViewById(R.id.venue_icon);
             text_name.setText(objects.get(position));
-            text_desc.setText(objects.get(position));
-            //if(!venueIcons.isEmpty())
-            //    imageView.setImageDrawable(venueIcons.get(position));
+            text_desc.setText(venues.get(position).getAddress());
             return rowView;
         }
     }

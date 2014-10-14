@@ -8,25 +8,31 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.zlei.checkInTool.CheckInActivity" >
 
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/map_venue"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:name="com.google.android.gms.maps.MapFragment"/>
+
     <Button
         android:id="@+id/mplaces_check_in_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="21dp"
+        android:layout_marginBottom="15dp"
         android:text="@string/check_in" />
 
     <TextView
         android:id="@+id/mplaces_venue_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/map_venue"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="15dp"
         android:text="@string/venue_name"
         android:textAppearance="?android:attr/textAppearanceLarge" />
-
+    <!--
     <TextView
         android:id="@+id/mplaces_venue_id"
         android:layout_width="wrap_content"
@@ -35,14 +41,15 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
         android:text="@string/venue_id" />
+        -->
 
     <TextView
         android:id="@+id/mplaces_venue_major"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/mplaces_venue_id"
+        android:layout_below="@+id/mplaces_venue_icon"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="10dp"
         android:text="@string/venue_major" />
 
     <TextView
@@ -51,7 +58,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/mplaces_venue_major"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="10dp"
         android:text="@string/venue_location" />
 
     <TextView
@@ -60,7 +67,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/mplaces_venue_herenow"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="10dp"
         android:text="@string/venue_stats" />
 
     <TextView
@@ -69,7 +76,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/mplaces_venue_location"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="10dp"
         android:text="@string/venue_herenow" />
 
     <ImageView
