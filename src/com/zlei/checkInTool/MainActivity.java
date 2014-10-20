@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import br.com.condesales.EasyFoursquareAsync;
 import br.com.condesales.listeners.AccessTokenRequestListener;
 import br.com.condesales.listeners.ImageRequestListener;
@@ -34,6 +35,7 @@ import com.google.android.gms.maps.MapFragment;
 import com.sessionm.api.SessionM.ActivityType;
 import com.sessionm.api.ext.SessionM;
 import com.sessionm.core.Config;
+import com.zlei.ble.DeviceScanActivity;
 
 
 public class MainActivity extends Activity implements
@@ -48,14 +50,14 @@ public class MainActivity extends Activity implements
     private String[] mListTitles;
 
     private static EasyFoursquareAsync async;
-    
+
     private static com.sessionm.api.ext.SessionM sessionM;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        
+
         sessionM = com.sessionm.api.ext.SessionM.getInstance();
 
         Config config = sessionM.getConfig();
@@ -89,17 +91,17 @@ public class MainActivity extends Activity implements
                 R.drawable.ic_drawer,
                 R.string.drawer_open,
                 R.string.drawer_close
-                ) {
-                    public void onDrawerClosed(View view) {
-                        getActionBar().setTitle(mTitle);
-                        invalidateOptionsMenu();
-                    }
+        ) {
+            public void onDrawerClosed(View view) {
+                getActionBar().setTitle(mTitle);
+                invalidateOptionsMenu();
+            }
 
-                    public void onDrawerOpened(View drawerView) {
-                        getActionBar().setTitle(mDrawerTitle);
-                        invalidateOptionsMenu();
-                    }
-                };
+            public void onDrawerOpened(View drawerView) {
+                getActionBar().setTitle(mDrawerTitle);
+                invalidateOptionsMenu();
+            }
+        };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         if (savedInstanceState == null) {
@@ -215,34 +217,38 @@ public class MainActivity extends Activity implements
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
+                                 Bundle savedInstanceState) {
             int i = getArguments().getInt(ARG_NUMBER);
             View rootView = inflater.inflate(R.layout.activity_main,
                     container, false);
             switch (i) {
-            case 1:
-                Intent i1 = new Intent(this.getActivity(), VenuesActivity.class);
-                startActivity(i1);
-                break;
-            case 2:
-                Intent i2 = new Intent(this.getActivity(), MVenuesActivity.class);
-                startActivity(i2);
-                break;
-            case 3:
-                //String portalButtonPath = String.format(Locale.US, "apps/%s/mplaces/ads", SESSIONM_APP_KEY);
-                //sessionM.presentActivity(ActivityType.PORTAL, portalButtonPath);
-                sessionM.presentActivity(ActivityType.PORTAL);
-                break;
-            case 4:
-                Intent i3 = new Intent(this.getActivity(), AccountActivity.class);
-                startActivity(i3);
-                break;
-            case 5:
-                Intent i4 = new Intent(this.getActivity(), MapActivity.class);
-                startActivity(i4);
-                break;
-            default:
-                break;
+                case 1:
+                    Intent i1 = new Intent(this.getActivity(), VenuesActivity.class);
+                    startActivity(i1);
+                    break;
+                case 2:
+                    Intent i2 = new Intent(this.getActivity(), MVenuesActivity.class);
+                    startActivity(i2);
+                    break;
+                case 3:
+                    //String portalButtonPath = String.format(Locale.US, "apps/%s/mplaces/ads", SESSIONM_APP_KEY);
+                    //sessionM.presentActivity(ActivityType.PORTAL, portalButtonPath);
+                    sessionM.presentActivity(ActivityType.PORTAL);
+                    break;
+                case 4:
+                    Intent i3 = new Intent(this.getActivity(), AccountActivity.class);
+                    startActivity(i3);
+                    break;
+                case 5:
+                    Intent i4 = new Intent(this.getActivity(), MapActivity.class);
+                    startActivity(i4);
+                    break;
+                case 6:
+                    Intent i5 = new Intent(this.getActivity(), DeviceScanActivity.class);
+                    startActivity(i5);
+                    break;
+                default:
+                    break;
             }
             return rootView;
         }
