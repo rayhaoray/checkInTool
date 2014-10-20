@@ -34,6 +34,7 @@ public class DeviceScanActivity extends ListActivity {
     private BluetoothAdapter mBluetoothAdapter;
     private boolean mScanning;
     private Handler mHandler;
+    public static ArrayList<BLEDevice> mDevices;
     private static final int REQUEST_ENABLE_BT = 1;
     // Stops scanning after 10 seconds.
     private static final long SCAN_PERIOD = 10000;
@@ -159,20 +160,8 @@ public class DeviceScanActivity extends ListActivity {
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
-        final BluetoothDevice device = mLeDeviceListAdapter.getDevice(position);
-        final String uuid = mLeDeviceListAdapter.getDeviceUUID(position);
-        final int rssi = mLeDeviceListAdapter.getDeviceRSSI(position);
-        if (device == null)
-            return;
         final Intent intent = new Intent(this, DeviceControlActivity.class);
-        intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME,
-                device.getName());
-        intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS,
-                device.getAddress());
-        intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_UUID,
-                uuid);
-        intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_RSSI,
-                rssi);
+        intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE, position);
 
         if (mScanning) {
             mBluetoothAdapter.stopLeScan(mLeScanCallback);
@@ -205,61 +194,36 @@ public class DeviceScanActivity extends ListActivity {
 
     // Adapter for holding devices found through scanning.
     private class LeDeviceListAdapter extends BaseAdapter {
-        private ArrayList<BluetoothDevice> mLeDevices;
-        private ArrayList<String> mLeDevicesUUID;
-        private ArrayList<Integer> mLeDevicesRSSI;
         private LayoutInflater mInflator;
 
         public LeDeviceListAdapter() {
             super();
-            mLeDevices = new ArrayList<BluetoothDevice>();
-            mLeDevicesUUID = new ArrayList<String>();
-            mLeDevicesRSSI = new ArrayList<Integer>();
+            mDevices = new ArrayList<BLEDevice>();
             mInflator = DeviceScanActivity.this.getLayoutInflater();
         }
 
-        public void addDevice(BluetoothDevice device) {
-            if (!mLeDevices.contains(device)) {
-                mLeDevices.add(device);
+        public void addDevice(BLEDevice device) {
+            if (!mDevices.contains(device)) {
+                mDevices.add(device);
             }
         }
 
-        public void addUUID(String uuid) {
-            if (!mLeDevicesUUID.contains(uuid)) {
-                mLeDevicesUUID.add(uuid);
-            }
-        }
-
-        public void addRSSI(int uuid) {
-            if (!mLeDevicesRSSI.contains(uuid)) {
-                mLeDevicesRSSI.add(uuid);
-            }
-        }
-
-        public BluetoothDevice getDevice(int position) {
-            return mLeDevices.get(position);
-        }
-
-        public String getDeviceUUID(int position) {
-            return mLeDevicesUUID.get(position);
-        }
-
-        public int getDeviceRSSI(int position) {
-            return mLeDevicesRSSI.get(position);
+        public BLEDevice getDevice(int position) {
+            return mDevices.get(position);
         }
 
         public void clear() {
-            mLeDevices.clear();
+            mDevices.clear();
         }
 
         @Override
         public int getCount() {
-            return mLeDevices.size();
+            return mDevices.size();
         }
 
         @Override
         public Object getItem(int i) {
-            return mLeDevices.get(i);
+            return mDevices.get(i);
         }
 
         @Override
@@ -281,13 +245,13 @@ public class DeviceScanActivity extends ListActivity {
                 viewHolder = (ViewHolder) view.getTag();
             }
 
-            BluetoothDevice device = mLeDevices.get(i);
-            final String deviceName = device.getName();
+            BLEDevice device = mDevices.get(i);
+            final String deviceName = device.getUUID();
             if (deviceName != null && deviceName.length() > 0)
                 viewHolder.deviceName.setText(deviceName);
             else
                 viewHolder.deviceName.setText(R.string.unknown_device);
-            viewHolder.deviceAddress.setText(device.getAddress());
+            viewHolder.deviceAddress.setText(device.getMAC());
 
             return view;
         }
@@ -298,7 +262,7 @@ public class DeviceScanActivity extends ListActivity {
             new BluetoothAdapter.LeScanCallback() {
 
                 @Override
-                public void onLeScan(final BluetoothDevice device, final int rssi, final byte[] scanRecord) {
+                public void onLeScan(final BluetoothDevice mac, final int rssi, final byte[] scanRecord) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -332,15 +296,20 @@ public class DeviceScanActivity extends ListActivity {
                                     Log.d("log", "Major: " + major);
                                     Log.d("log", "Minor: " + minor);
                                     Log.d("log", "RSSI:" + rssi);
-                                    Log.d("log", "Device" + device);
+                                    Log.d("log", "MAC:" + mac);
                                     Log.d("log",
                                             "ROWDATA: " + bytesToHex(scanRecord));
                                     if (rssi > -50) {
                                         SessionM.getInstance().logAction("daily visit");
                                     }
+                                    BLEDevice device = new BLEDevice();
+                                    device.setMAC(mac);
+                                    device.setMajor(major);
+                                    device.setMinor(minor);
+                                    device.setRawData(bytesToHex(scanRecord));
+                                    device.setRSSI(rssi);
+                                    device.setUUID(uuid);
                                     mLeDeviceListAdapter.addDevice(device);
-                                    mLeDeviceListAdapter.addUUID(uuid);
-                                    mLeDeviceListAdapter.addRSSI(rssi);
                                     mLeDeviceListAdapter.notifyDataSetChanged();
                                 }
                             } else {

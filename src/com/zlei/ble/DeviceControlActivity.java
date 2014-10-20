@@ -35,10 +35,7 @@ import java.util.List;
 public class DeviceControlActivity extends Activity {
     private final static String TAG = DeviceControlActivity.class.getSimpleName();
 
-    public static final String EXTRAS_DEVICE_NAME = "DEVICE_NAME";
-    public static final String EXTRAS_DEVICE_ADDRESS = "DEVICE_ADDRESS";
-    public static final String EXTRAS_DEVICE_UUID = "DEVICE_UUID";
-    public static final String EXTRAS_DEVICE_RSSI = "DEVICE_RSSI";
+    public static final String EXTRAS_DEVICE = "DEVICE";
     public static final String EXTRAS_DEVICE_DISTANCE = "DEVICE_DISTANCE";
     public static final String EXTRAS_DEVICE_TYPE = "DEVICE_IBEACON_TYPE";
 
@@ -51,6 +48,7 @@ public class DeviceControlActivity extends Activity {
     private TextView mDistanceField;
     private TextView mTypeField;
 
+    private BLEDevice mDevice;
     private String mDeviceName;
     private String mDeviceAddress;
     private String mDeviceUUID;
@@ -173,10 +171,12 @@ public class DeviceControlActivity extends Activity {
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
         final Intent intent = getIntent();
-        mDeviceName = intent.getStringExtra(EXTRAS_DEVICE_NAME);
-        mDeviceAddress = intent.getStringExtra(EXTRAS_DEVICE_ADDRESS);
-        mDeviceUUID = intent.getStringExtra(EXTRAS_DEVICE_UUID);
-        mDeviceRSSI = intent.getIntExtra(EXTRAS_DEVICE_RSSI, 0);
+
+        mDevice = DeviceScanActivity.mDevices.get(Integer.parseInt(intent.getStringExtra(EXTRAS_DEVICE)));
+        mDeviceName = mDevice.getMAC();
+        mDeviceAddress = mDevice.getMAC();
+        mDeviceUUID = mDevice.getUUID();
+        mDeviceRSSI = Integer.parseInt(mDevice.getRSSI());
         mDeviceDistance = getDistance(TXPOWER, mDeviceRSSI);
         mDeviceIBeaconType = getIBeaconType(mDeviceDistance);
 
