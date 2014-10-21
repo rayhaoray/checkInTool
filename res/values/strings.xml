@@ -39,6 +39,8 @@
     <string name="ble_not_supported">BLE is not supported</string>
     <string name="label_uuid">UUID:</string>
     <string name="label_rssi">RSSI:</string>
+    <string name="label_major">Major:</string>
+    <string name="label_minor">Minor:</string>
     <string name="label_distance">Approximate Distance:</string>
     <string name="label_type">Ibeacon Type:</string>
     <string name="label_device_address">Device address:</string>
@@ -58,5 +60,6 @@
     <string name="menu_disconnect">Disconnect</string>
     <string name="menu_scan">Scan</string>
     <string name="menu_stop">Stop</string>
+    <string name="label_zero">0</string>
 
 </resources>

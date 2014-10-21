@@ -26,35 +26,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * For a given BLE device, this Activity provides the user interface to connect,
- * display data, and display GATT services and characteristics supported by the
- * device. The Activity communicates with {@code BluetoothLeService}, which in
- * turn interacts with the Bluetooth LE API.
- */
 public class DeviceControlActivity extends Activity {
     private final static String TAG = DeviceControlActivity.class.getSimpleName();
 
-    public static final String EXTRAS_DEVICE = "DEVICE";
-    public static final String EXTRAS_DEVICE_DISTANCE = "DEVICE_DISTANCE";
-    public static final String EXTRAS_DEVICE_TYPE = "DEVICE_IBEACON_TYPE";
-
-    // default 1m strength
     private static final int TXPOWER = -49;
 
     private TextView mConnectionState;
     private TextView mUUIDField;
     private TextView mRSSIField;
+    private TextView mMajorField;
+    private TextView mMinorField;
     private TextView mDistanceField;
     private TextView mTypeField;
 
-    private BLEDevice mDevice;
-    private String mDeviceName;
     private String mDeviceAddress;
-    private String mDeviceUUID;
-    private int mDeviceRSSI;
-    private String mDeviceDistance;
-    private String mDeviceIBeaconType;
 
     private ExpandableListView mGattServicesList;
     private BluetoothLeService mBluetoothLeService;
@@ -63,10 +48,6 @@ public class DeviceControlActivity extends Activity {
     private boolean mConnected = false;
     private BluetoothGattCharacteristic mNotifyCharacteristic;
 
-    private final String LIST_NAME = "NAME";
-    private final String LIST_UUID = "UUID";
-
-    // Code to manage Service lifecycle.
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
 
         @Override
@@ -76,8 +57,6 @@ public class DeviceControlActivity extends Activity {
                 Log.e(TAG, "Unable to initialize Bluetooth");
                 finish();
             }
-            // Automatically connects to the device upon successful start-up
-            // initialization.
             mBluetoothLeService.connect(mDeviceAddress);
         }
 
@@ -87,13 +66,6 @@ public class DeviceControlActivity extends Activity {
         }
     };
 
-    // Handles various events fired by the Service.
-    // ACTION_GATT_CONNECTED: connected to a GATT server.
-    // ACTION_GATT_DISCONNECTED: disconnected from a GATT server.
-    // ACTION_GATT_SERVICES_DISCOVERED: discovered GATT services.
-    // ACTION_DATA_AVAILABLE: received data from the device. This can be a
-    // result of read
-    // or notification operations.
     private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -108,8 +80,6 @@ public class DeviceControlActivity extends Activity {
                 invalidateOptionsMenu();
                 clearUI();
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
-                // Show all the supported services and characteristics on the
-                // user interface.
                 displayGattServices(mBluetoothLeService.getSupportedGattServices());
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
                 // displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
@@ -117,28 +87,18 @@ public class DeviceControlActivity extends Activity {
         }
     };
 
-    // If a given GATT characteristic is selected, check for supported features.
-    // This sample
-    // demonstrates 'Read' and 'Notify' features. See
-    // http://d.android.com/reference/android/bluetooth/BluetoothGatt.html for
-    // the complete
-    // list of supported characteristic features.
     private final ExpandableListView.OnChildClickListener servicesListClickListner =
             new ExpandableListView.OnChildClickListener() {
                 @Override
                 public boolean onChildClick(ExpandableListView parent, View v, int groupPosition,
-                        int childPosition, long id) {
+                                            int childPosition, long id) {
                     if (mGattCharacteristics != null) {
                         final BluetoothGattCharacteristic characteristic =
                                 mGattCharacteristics.get(groupPosition).get(
                                         childPosition);
                         final int charaProp = characteristic.getProperties();
                         if ((charaProp | BluetoothGattCharacteristic.PROPERTY_READ) > 0) {
-                            // If there is an active notification on a
-                            // characteristic, clear
-                            // it first so it doesn't update the data field on
-                            // the user interface.
-                            if (mNotifyCharacteristic != null) {
+                           if (mNotifyCharacteristic != null) {
                                 mBluetoothLeService.setCharacteristicNotification(
                                         mNotifyCharacteristic, false);
                                 mNotifyCharacteristic = null;
@@ -158,10 +118,12 @@ public class DeviceControlActivity extends Activity {
 
     private void clearUI() {
         mGattServicesList.setAdapter((SimpleExpandableListAdapter) null);
-        mUUIDField.setText(R.string.no_data);
-        mRSSIField.setText(R.string.no_data);
-        mDistanceField.setText(R.string.no_data);
-        mTypeField.setText(R.string.no_data);
+        mUUIDField.setText(R.string.label_zero);
+        mRSSIField.setText(R.string.label_zero);
+        mMajorField.setText(R.string.label_zero);
+        mMinorField.setText(R.string.label_zero);
+        mDistanceField.setText(R.string.label_zero);
+        mTypeField.setText(R.string.label_zero);
     }
 
     @Override
@@ -171,25 +133,28 @@ public class DeviceControlActivity extends Activity {
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
         final Intent intent = getIntent();
-
-        mDevice = DeviceScanActivity.mDevices.get(Integer.parseInt(intent.getStringExtra(EXTRAS_DEVICE)));
-        mDeviceName = mDevice.getMAC();
+        int position = intent.getIntExtra("position", 0);
+        BLEDevice mDevice = DeviceScanActivity.mDevices.get(position);
+        String mDeviceName = mDevice.getMAC();
         mDeviceAddress = mDevice.getMAC();
-        mDeviceUUID = mDevice.getUUID();
-        mDeviceRSSI = Integer.parseInt(mDevice.getRSSI());
-        mDeviceDistance = getDistance(TXPOWER, mDeviceRSSI);
-        mDeviceIBeaconType = getIBeaconType(mDeviceDistance);
+        String mDeviceUUID = mDevice.getUUID();
+        String mDeviceMajor = mDevice.getMajor();
+        String mDeviceMinor = mDevice.getMinor();
+        int mDeviceRSSI = Integer.parseInt(mDevice.getRSSI());
+        String mDeviceDistance = getDistance(TXPOWER, mDeviceRSSI);
+        String mDeviceIBeaconType = getIBeaconType(mDeviceDistance);
 
-        // Sets up UI references.
         ((TextView) findViewById(R.id.device_address)).setText(mDeviceAddress);
         mGattServicesList = (ExpandableListView) findViewById(R.id.gatt_services_list);
         mGattServicesList.setOnChildClickListener(servicesListClickListner);
         mConnectionState = (TextView) findViewById(R.id.connection_state);
         mUUIDField = (TextView) findViewById(R.id.uuid_value);
         mRSSIField = (TextView) findViewById(R.id.rssi_value);
+        mMajorField = (TextView) findViewById(R.id.major_value);
+        mMinorField = (TextView) findViewById(R.id.minor_value);
         mDistanceField = (TextView) findViewById(R.id.distance_value);
         mTypeField = (TextView) findViewById(R.id.type_value);
-        displayData(mDeviceUUID, mDeviceRSSI, mDeviceDistance,
+        displayData(mDeviceUUID, mDeviceRSSI, mDeviceMajor, mDeviceMinor, mDeviceDistance,
                 mDeviceIBeaconType);
         getActionBar().setTitle(mDeviceName);
         getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -236,15 +201,15 @@ public class DeviceControlActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case R.id.menu_connect:
-            mBluetoothLeService.connect(mDeviceAddress);
-            return true;
-        case R.id.menu_disconnect:
-            mBluetoothLeService.disconnect();
-            return true;
-        case android.R.id.home:
-            onBackPressed();
-            return true;
+            case R.id.menu_connect:
+                mBluetoothLeService.connect(mDeviceAddress);
+                return true;
+            case R.id.menu_disconnect:
+                mBluetoothLeService.disconnect();
+                return true;
+            case android.R.id.home:
+                onBackPressed();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -258,24 +223,21 @@ public class DeviceControlActivity extends Activity {
         });
     }
 
-    private void displayData(String uuid, int rssi, String distance, String iBeaconType) {
+    private void displayData(String uuid, int rssi, String major, String minor, String distance, String iBeaconType) {
         if (uuid != null && iBeaconType != null) {
             mUUIDField.setText(uuid);
             mRSSIField.setText(Integer.toString(rssi));
+            mMajorField.setText(major);
+            mMinorField.setText(minor);
             mDistanceField.setText(distance);
             mTypeField.setText(iBeaconType);
         }
     }
 
-    // Demonstrates how to iterate through the supported GATT
-    // Services/Characteristics.
-    // In this sample, we populate the data structure that is bound to the
-    // ExpandableListView
-    // on the UI.
     private void displayGattServices(List<BluetoothGattService> gattServices) {
         if (gattServices == null)
             return;
-        String uuid = null;
+        String uuid;
         String unknownServiceString = getResources().getString(
                 R.string.unknown_service);
         String unknownCharaString = getResources().getString(
@@ -284,7 +246,8 @@ public class DeviceControlActivity extends Activity {
         ArrayList<ArrayList<HashMap<String, String>>> gattCharacteristicData = new ArrayList<ArrayList<HashMap<String, String>>>();
         mGattCharacteristics = new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
 
-        // Loops through available GATT Services.
+        String LIST_NAME = "NAME";
+        String LIST_UUID = "UUID";
         for (BluetoothGattService gattService : gattServices) {
             HashMap<String, String> currentServiceData = new HashMap<String, String>();
             uuid = gattService.getUuid().toString();
@@ -301,7 +264,6 @@ public class DeviceControlActivity extends Activity {
             ArrayList<BluetoothGattCharacteristic> charas =
                     new ArrayList<BluetoothGattCharacteristic>();
 
-            // Loops through available Characteristics.
             for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics) {
                 charas.add(gattCharacteristic);
                 HashMap<String, String> currentCharaData = new HashMap<String, String>();
@@ -320,13 +282,13 @@ public class DeviceControlActivity extends Activity {
                 this,
                 gattServiceData,
                 android.R.layout.simple_expandable_list_item_2,
-                new String[] { LIST_NAME, LIST_UUID },
-                new int[] { android.R.id.text1, android.R.id.text2 },
+                new String[]{LIST_NAME, LIST_UUID},
+                new int[]{android.R.id.text1, android.R.id.text2},
                 gattCharacteristicData,
                 android.R.layout.simple_expandable_list_item_2,
-                new String[] { LIST_NAME, LIST_UUID },
-                new int[] { android.R.id.text1, android.R.id.text2 }
-                );
+                new String[]{LIST_NAME, LIST_UUID},
+                new int[]{android.R.id.text1, android.R.id.text2}
+        );
         mGattServicesList.setAdapter(gattServiceAdapter);
     }
 
@@ -339,29 +301,23 @@ public class DeviceControlActivity extends Activity {
         return intentFilter;
     }
 
-    // From RadioNetwork: Independent algorithm because the iOS CoreLocation
-    // source code is not available. Measured a bunch of rssi measurements at
-    // known distances, then did a best fit curve to match the data points.
     /**
-     * 
-     * @param txPower
-     *            : Calibrate an iBeacon by measuring the signal strength of its
-     *            transmission at 1 meter away, then configure the iBeacon to
-     *            transmit that constant.
-     * @param rssi
-     * @return
+     * @param txPower : Calibrate an iBeacon by measuring the signal strength of its
+     *                transmission at 1 meter away, then configure the iBeacon to
+     *                transmit that constant.
+     * @param rssi int
+     * @return string
      */
     private static String getDistance(int txPower, int rssi) {
         DecimalFormat df = new DecimalFormat("#.##");
         if (rssi == 0) {
-            return df.format(-1.0); // if we cannot determine accuracy, return -1.
+            return df.format(-1.0);
         }
 
         double ratio = rssi * 1.0 / txPower;
         if (ratio < 1.0) {
             return df.format(Math.pow(ratio, 10));
-        }
-        else {
+        } else {
             double distance = (0.89976) * Math.pow(ratio, 7.7095) + 0.111;
             return df.format(distance);
         }
@@ -370,11 +326,11 @@ public class DeviceControlActivity extends Activity {
     private String getIBeaconType(String distance) {
         Double d = Double.parseDouble(distance);
         String type = "UNKNOWN";
-        if(0 < d && d <= 0.5)
+        if (0 < d && d <= 0.5)
             type = "IMMEDIATE";
-        else if(0.5 < d && d <= 3)
+        else if (0.5 < d && d <= 3)
             type = "NEAR";
-        else if(3 < d && d <= 30)
+        else if (3 < d && d <= 30)
             type = "FAR";
         return type;
     }
