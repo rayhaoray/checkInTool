@@ -48,6 +48,7 @@ public class MainActivity extends Activity implements
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private String[] mListTitles;
+    private boolean startFromNotification;
 
     private static EasyFoursquareAsync async;
 
@@ -104,6 +105,10 @@ public class MainActivity extends Activity implements
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
+        Bundle bundle = getIntent().getExtras();
+        if(bundle != null) {
+            startFromNotification = bundle.getBoolean("startFromNotification");
+        }
         if (savedInstanceState == null) {
             selectItem(0);
         }
@@ -123,6 +128,10 @@ public class MainActivity extends Activity implements
     protected void onResume() {
         super.onResume();
         SessionM.getInstance().onActivityResume(this);
+        if(startFromNotification){
+            SessionM.getInstance().presentActivity(ActivityType.PORTAL);
+            startFromNotification = false;
+        }
     }
 
     @Override

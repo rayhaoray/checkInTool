@@ -1,8 +1,13 @@
 package com.zlei.checkInTool;
 
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,12 +26,13 @@ import br.com.condesales.models.Venue;
 public class CheckInActivity extends Activity {
 
     private Venue currentVenue;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_check_in);
         getActionBar().setDisplayHomeAsUpEnabled(true);
-        
+
         Intent intent = getIntent();
         currentVenue = VenuesActivity.getNearbyVenues().get(intent.getIntExtra("selectedVenue", 0));
         TextView venueName_text = (TextView) this.findViewById(R.id.venue_name);
@@ -44,26 +50,27 @@ public class CheckInActivity extends Activity {
         venueLocation_text.setText("Lat: " + currentVenue.getLocation().getLat() + "\nLng: " + currentVenue.getLocation().getLng());
         venueHereNow_text.setText(currentVenue.getHereNow().getSummary());
         venueStats_text.setText(getStats(currentVenue));
-        checkin_btn.setOnClickListener(new OnClickListener(){
+        checkin_btn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 EasyFoursquareAsync async = AccountActivity.getAsync();
                 //if(async != null)
-                    //checkin(currentVenue.getId());
+                //checkin(currentVenue.getId());
                 //else
-                    //Toast.makeText(CheckInActivity.this, "Log in first!", Toast.LENGTH_LONG).show();
+                //Toast.makeText(CheckInActivity.this, "Log in first!", Toast.LENGTH_LONG).show();
             }
         });
 
-        DecimalFormat df=new DecimalFormat("0.000");
+        DecimalFormat df = new DecimalFormat("0.000");
         String curLat = df.format(currentVenue.getLocation().getLat());
         String curLng = df.format(currentVenue.getLocation().getLng());
         final String[] curCoor = new String[3];
         curCoor[0] = curLat;
         curCoor[1] = curLng;
         curCoor[2] = "checkable";
-        if(MVenuesActivity.venueNames.contains(currentVenue.getName()) || MVenuesActivity.venueCoordinates.contains(curCoor)){
+        if (MVenuesActivity.venueNames.contains(currentVenue.getName()) || MVenuesActivity.venueCoordinates.contains(curCoor)) {
             Toast.makeText(CheckInActivity.this, "MPlaces Check In Available!", Toast.LENGTH_LONG).show();
+            pushNotification("notifyCheckIn");
             go_mplaces_btn.setVisibility(View.VISIBLE);
             go_mplaces_btn.setOnClickListener(new OnClickListener() {
                 @Override
@@ -74,12 +81,11 @@ public class CheckInActivity extends Activity {
                     startActivity(i);
                 }
             });
-        }
-        else
+        } else
             Toast.makeText(CheckInActivity.this, "No!", Toast.LENGTH_LONG).show();
 
     }
-    
+
     private void checkin(String venueId) {
         CheckInCriteria criteria = new CheckInCriteria();
         criteria.setBroadcast(CheckInCriteria.BroadCastType.PUBLIC);
@@ -97,13 +103,13 @@ public class CheckInActivity extends Activity {
             }
         }, criteria);
     }
-    
-    private String getStats(Venue venue){
-        String stats = "Checkins Count: " + venue.getStats().getCheckinsCount() + "\n" 
-                    + "Users Count: " + venue.getStats().getUsersCount() + "\n"
-                    + "Tips Count: " + venue.getStats().getTipCount() + "\n"
-                    + "Created At: " + venue.getCreatedAt() + "\n"
-                    + "TimeZone: " + venue.getTimeZone();
+
+    private String getStats(Venue venue) {
+        String stats = "Checkins Count: " + venue.getStats().getCheckinsCount() + "\n"
+                + "Users Count: " + venue.getStats().getUsersCount() + "\n"
+                + "Tips Count: " + venue.getStats().getTipCount() + "\n"
+                + "Created At: " + venue.getCreatedAt() + "\n"
+                + "TimeZone: " + venue.getTimeZone();
         return stats;
     }
 
@@ -113,10 +119,45 @@ public class CheckInActivity extends Activity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == android.R.id.home){
+        if (id == android.R.id.home) {
             this.finish();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void pushNotification(String action) {
+        NotificationCompat.Builder mBuilder;
+        Intent resultIntent;
+        if (action.equals("notifyCheckIn")) {
+            mBuilder = new NotificationCompat.Builder(this)
+                    .setSmallIcon(R.drawable.ic_launcher)
+                    .setContentTitle("CheckIn Available!")
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setContentText("CheckIn mPLACES!");
+            resultIntent = new Intent(this, MCheckInActivity.class);
+            resultIntent.putExtra("selectedVenue", MVenuesActivity.venueNames.indexOf(currentVenue.getName()));
+        } else {
+            mBuilder = new NotificationCompat.Builder(this)
+                    .setSmallIcon(R.drawable.ic_launcher)
+                    .setContentTitle("New Achievement!")
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setContentText("Claim your achievement");
+            resultIntent = new Intent(this, MainActivity.class);
+        }
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addParentStack(MainActivity.class);
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        // mId allows you to update the notification later on.
+        int mId = 1;
+        mNotificationManager.notify(mId, mBuilder.build());
     }
 }

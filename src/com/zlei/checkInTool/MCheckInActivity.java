@@ -1,11 +1,16 @@
 package com.zlei.checkInTool;
 
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
+import android.content.Context;
 import android.content.Intent;
 import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -192,11 +197,49 @@ public class MCheckInActivity extends Activity {
 
         protected void onPostExecute(String result) {
             Log.i("SessionM places_request: ", request);
-            if (result != null && isSuccess)
+            if (result != null && isSuccess) {
                 Toast.makeText(MCheckInActivity.this, "Done!", Toast.LENGTH_LONG).show();
+            }
             else
                 Toast.makeText(MCheckInActivity.this, "Error!", Toast.LENGTH_LONG).show();
+            pushNotification("");
             finish();
         }
+    }
+
+    public void pushNotification(String action) {
+        NotificationCompat.Builder mBuilder;
+        Intent resultIntent;
+        if (action.equals("notifyCheckIn")) {
+            mBuilder = new NotificationCompat.Builder(this)
+                    .setSmallIcon(R.drawable.ic_launcher)
+                    .setContentTitle("CheckIn Available!")
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setContentText("CheckIn mPLACES!");
+            resultIntent = new Intent(this, MCheckInActivity.class);
+            resultIntent.putExtra("selectedVenue", MVenuesActivity.venueNames.indexOf(currentVenue.getName()));
+        } else {
+            mBuilder = new NotificationCompat.Builder(this)
+                    .setSmallIcon(R.drawable.ic_launcher)
+                    .setContentTitle("New Achievement!")
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setContentText("Claim your achievement");
+            resultIntent = new Intent(this, MainActivity.class);
+            resultIntent.putExtra("startFromNotification", true);
+        }
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addParentStack(MainActivity.class);
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        // mId allows you to update the notification later on.
+        int mId = 1;
+        mNotificationManager.notify(mId, mBuilder.build());
     }
 }
