@@ -83,7 +83,6 @@
         android:id="@+id/mplaces_venue_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_launcher"
         android:layout_below="@+id/mplaces_venue_name"
         android:layout_centerHorizontal="true" />
 

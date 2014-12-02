@@ -48,8 +48,8 @@ public class CheckInActivity extends Activity {
         venueId_text.setText(currentVenue.getId());
         //venueMajor_text.setText(currentVenue.getMayor().getUser().getBio());
         venueLocation_text.setText("Lat: " + currentVenue.getLocation().getLat() + "\nLng: " + currentVenue.getLocation().getLng());
-        venueHereNow_text.setText(currentVenue.getHereNow().getSummary());
-        venueStats_text.setText(getStats(currentVenue));
+        //venueHereNow_text.setText(currentVenue.getHereNow().getSummary());
+        //venueStats_text.setText(getStats(currentVenue));
         checkin_btn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -69,7 +69,7 @@ public class CheckInActivity extends Activity {
         curCoor[1] = curLng;
         curCoor[2] = "checkable";
         if (MVenuesActivity.venueNames.contains(currentVenue.getName()) || MVenuesActivity.venueCoordinates.contains(curCoor)) {
-            Toast.makeText(CheckInActivity.this, "MPlaces Check In Available!", Toast.LENGTH_LONG).show();
+            Toast.makeText(CheckInActivity.this, "mPLACES Check In Available!", Toast.LENGTH_LONG).show();
             pushNotification("notifyCheckIn");
             go_mplaces_btn.setVisibility(View.VISIBLE);
             go_mplaces_btn.setOnClickListener(new OnClickListener() {
@@ -82,7 +82,7 @@ public class CheckInActivity extends Activity {
                 }
             });
         } else
-            Toast.makeText(CheckInActivity.this, "No!", Toast.LENGTH_LONG).show();
+            Toast.makeText(CheckInActivity.this, "mPLACES not available!", Toast.LENGTH_SHORT).show();
 
     }
 
@@ -94,7 +94,7 @@ public class CheckInActivity extends Activity {
         MainActivity.getAsync().checkIn(new CheckInListener() {
             @Override
             public void onCheckInDone(Checkin checkin) {
-                Toast.makeText(CheckInActivity.this, "Done!", Toast.LENGTH_LONG).show();
+                Toast.makeText(CheckInActivity.this, "Success!", Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -157,7 +157,7 @@ public class CheckInActivity extends Activity {
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         // mId allows you to update the notification later on.
-        int mId = 1;
+        int mId = 0;
         mNotificationManager.notify(mId, mBuilder.build());
     }
 }

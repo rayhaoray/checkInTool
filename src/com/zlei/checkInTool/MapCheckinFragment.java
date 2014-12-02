@@ -1,10 +1,12 @@
 package com.zlei.checkInTool;
 
-import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
-import android.view.MenuItem;
-import android.widget.Toast;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -16,21 +18,42 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 
-public class MapActivity extends Activity implements GoogleMap.OnInfoWindowClickListener {
+public class MapCheckinFragment extends Fragment implements GoogleMap.OnInfoWindowClickListener {
 
-    ArrayList<String> venueNames;
-    ArrayList<String[]> venueCoordinates;
+    private static ArrayList<String> venueNames;
+    private static ArrayList<String[]> venueCoordinates;
+
+
+    private static View view;
+    private static GoogleMap map;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_map);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        if (container == null) {
+            return null;
+        }
+        view = inflater.inflate(R.layout.activity_map, container, false);
 
-        // Get a handle to the Map Fragment
-        GoogleMap map = ((MapFragment) getFragmentManager()
-                .findFragmentById(R.id.map)).getMap();
+        setUpMapIfNeeded(); // For setting up the MapFragment
 
+        return view;
+    }
+
+    public void setUpMapIfNeeded() {
+        if (map == null) {
+            //TODO need to find a better way
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
+                map = ((MapFragment) getChildFragmentManager().findFragmentById(R.id.location_map)).getMap();
+            else
+                map = ((MapFragment) MainActivity.fragmentManager
+                    .findFragmentById(R.id.location_map)).getMap();
+            if (map != null)
+                setUpMap();
+        }
+    }
+
+    private void setUpMap() {
         map.setOnInfoWindowClickListener(this);
 
         if (!MVenuesActivity.venueNames.isEmpty()) {
@@ -63,30 +86,39 @@ public class MapActivity extends Activity implements GoogleMap.OnInfoWindowClick
                 }
             }
         }
-        else
-            Toast.makeText(this, "Location Not Available!", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        // TODO Auto-generated method stub
+        if (map != null)
+            setUpMap();
+
+        if (map == null) {
+            map = ((MapFragment) MainActivity.fragmentManager
+                    .findFragmentById(R.id.location_map)).getMap();
+            if (map != null)
+                setUpMap();
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (map != null) {
+            MainActivity.fragmentManager.beginTransaction()
+                    .remove(MainActivity.fragmentManager.findFragmentById(R.id.location_map)).commit();
+            map = null;
+        }
     }
 
     @Override
     public void onInfoWindowClick(Marker marker) {
         int position = venueNames.indexOf(marker.getTitle());
         if (venueCoordinates.get(position)[2].equals("checkable")) {
-            Intent i = new Intent(this, MCheckInActivity.class);
+            Intent i = new Intent(this.getActivity(), MCheckInActivity.class);
             i.putExtra("selectedVenue", position);
             startActivity(i);
         }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            this.finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 }

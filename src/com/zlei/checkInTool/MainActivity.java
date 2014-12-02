@@ -23,20 +23,18 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sessionm.api.SessionM.ActivityType;
+import com.sessionm.api.ext.SessionM;
+import com.sessionm.api.ext.SessionMFragment;
+import com.sessionm.core.Config;
+import com.zlei.ble.DeviceScanActivity;
+
 import br.com.condesales.EasyFoursquareAsync;
 import br.com.condesales.listeners.AccessTokenRequestListener;
 import br.com.condesales.listeners.ImageRequestListener;
 import br.com.condesales.listeners.UserInfoRequestListener;
 import br.com.condesales.models.User;
 import br.com.condesales.tasks.users.UserImageRequest;
-
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.sessionm.api.SessionM.ActivityType;
-import com.sessionm.api.ext.SessionM;
-import com.sessionm.core.Config;
-import com.zlei.ble.DeviceScanActivity;
-
 
 public class MainActivity extends Activity implements
         AccessTokenRequestListener, ImageRequestListener {
@@ -50,6 +48,8 @@ public class MainActivity extends Activity implements
     private String[] mListTitles;
     private boolean startFromNotification;
 
+    public static FragmentManager fragmentManager;
+
     private static EasyFoursquareAsync async;
 
     private static com.sessionm.api.ext.SessionM sessionM;
@@ -59,12 +59,13 @@ public class MainActivity extends Activity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        fragmentManager = getFragmentManager();
+
         sessionM = com.sessionm.api.ext.SessionM.getInstance();
 
-        Config config = sessionM.getConfig();
-        //ar for staging
-        Config.ServerType type = Config.ServerType.aq;
-        config.setServerType(type);
+        //Config config = sessionM.getConfig();
+        //Config.ServerType type = Config.ServerType.aC;
+        //config.setServerType(type);
 
         mTitle = mDrawerTitle = getTitle();
         mListTitles = getResources().getStringArray(R.array.lists_array);
@@ -106,7 +107,7 @@ public class MainActivity extends Activity implements
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         Bundle bundle = getIntent().getExtras();
-        if(bundle != null) {
+        if (bundle != null) {
             startFromNotification = bundle.getBoolean("startFromNotification");
         }
         if (savedInstanceState == null) {
@@ -128,9 +129,10 @@ public class MainActivity extends Activity implements
     protected void onResume() {
         super.onResume();
         SessionM.getInstance().onActivityResume(this);
-        if(startFromNotification){
+        if (startFromNotification) {
             SessionM.getInstance().presentActivity(ActivityType.PORTAL);
             startFromNotification = false;
+            finish();
         }
     }
 
@@ -179,8 +181,36 @@ public class MainActivity extends Activity implements
         Bundle args = new Bundle();
         args.putInt(ListFragment.ARG_NUMBER, position);
         fragment.setArguments(args);
-
         FragmentManager fragmentManager = getFragmentManager();
+        switch (position) {
+            case 0:
+                fragment = new SessionMFragment();
+                break;
+            case 1:
+                Intent i1 = new Intent(this, VenuesActivity.class);
+                startActivity(i1);
+                break;
+            case 2:
+                Intent i2 = new Intent(this, MVenuesActivity.class);
+                startActivity(i2);
+                break;
+            case 3:
+                sessionM.presentActivity(ActivityType.PORTAL);
+                break;
+            case 4:
+                Intent i3 = new Intent(this, AccountActivity.class);
+                startActivity(i3);
+                break;
+            case 5:
+                fragment = new MapCheckinFragment();
+                break;
+            case 6:
+                Intent i5 = new Intent(this, DeviceScanActivity.class);
+                startActivity(i5);
+                break;
+            default:
+                break;
+        }
         fragmentManager.beginTransaction().replace(R.id.main_content, fragment).commit();
 
         // update selected item and title, then close the drawer
@@ -230,35 +260,7 @@ public class MainActivity extends Activity implements
             int i = getArguments().getInt(ARG_NUMBER);
             View rootView = inflater.inflate(R.layout.activity_main,
                     container, false);
-            switch (i) {
-                case 1:
-                    Intent i1 = new Intent(this.getActivity(), VenuesActivity.class);
-                    startActivity(i1);
-                    break;
-                case 2:
-                    Intent i2 = new Intent(this.getActivity(), MVenuesActivity.class);
-                    startActivity(i2);
-                    break;
-                case 3:
-                    //String portalButtonPath = String.format(Locale.US, "apps/%s/mplaces/ads", SESSIONM_APP_KEY);
-                    //sessionM.presentActivity(ActivityType.PORTAL, portalButtonPath);
-                    sessionM.presentActivity(ActivityType.PORTAL);
-                    break;
-                case 4:
-                    Intent i3 = new Intent(this.getActivity(), AccountActivity.class);
-                    startActivity(i3);
-                    break;
-                case 5:
-                    Intent i4 = new Intent(this.getActivity(), MapActivity.class);
-                    startActivity(i4);
-                    break;
-                case 6:
-                    Intent i5 = new Intent(this.getActivity(), DeviceScanActivity.class);
-                    startActivity(i5);
-                    break;
-                default:
-                    break;
-            }
+
             return rootView;
         }
     }

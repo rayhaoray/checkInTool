@@ -3,9 +3,8 @@ apply plugin: 'android'
 dependencies {
     compile project(':easyFoursquare4Android:easyFoursquare4Android')
     compile project(':ActionBar-PullToRefresh:library:src:main')
-    compile files('libs/SessionM.1.9.13.jar')
     compile 'com.google.android.gms:play-services:6.1.+'
-    compile files('libs/SessionM.1.9.14.jar')
+    compile files('libs/SessionM.1.10.0.jar')
 }
 
 android {

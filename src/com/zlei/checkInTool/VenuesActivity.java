@@ -91,7 +91,7 @@ public class VenuesActivity extends ListActivity implements
 
             @Override
             public void onError(String errorMsg) {
-                Toast.makeText(VenuesActivity.this, "error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(VenuesActivity.this, "Request error!", Toast.LENGTH_SHORT).show();
             }
 
             @Override

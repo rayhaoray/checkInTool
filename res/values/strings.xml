@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">CheckInTool</string>
+    <string name="app_name">SessionM Lab</string>
 
     <string-array name="lists_array">
         <item>Home</item>
@@ -16,7 +16,6 @@
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="title_activity_venues">VenuesActivity</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_check_in">CheckInActivity</string>
 
@@ -30,6 +29,7 @@
     <string name="venue_stats">Stats</string>
     <string name="venue_herenow">HereNow</string>
     <string name="check_in">Check In</string>
+    <string name="check_in_foursquare">Check In Foursquare</string>
     <string name="go_mplaces_check_in">Check In MPlaces</string>
     <string name="title_activity_tips">TipsActivity</string>
     <string name="title_activity_mplaces">MPlacesActivity</string>
@@ -45,21 +45,21 @@
     <string name="label_type">Ibeacon Type:</string>
     <string name="label_device_address">Device address:</string>
     <string name="label_state">State:</string>
-
     <string name="no_data">No data</string>
     <string name="connected">Connected</string>
     <string name="disconnected">Disconnected</string>
     <string name="title_devices">BLE Device Scan</string>
     <string name="error_bluetooth_not_supported">Bluetooth not supported.</string>
-
     <string name="unknown_device">Unknown device</string>
     <string name="unknown_characteristic">Unknown characteristic</string>
     <string name="unknown_service">Unknown service</string>
-
     <string name="menu_connect">Connect</string>
     <string name="menu_disconnect">Disconnect</string>
     <string name="menu_scan">Scan</string>
     <string name="menu_stop">Stop</string>
     <string name="label_zero">0</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_portal">PortalActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

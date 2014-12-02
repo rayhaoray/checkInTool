@@ -198,10 +198,10 @@ public class MCheckInActivity extends Activity {
         protected void onPostExecute(String result) {
             Log.i("SessionM places_request: ", request);
             if (result != null && isSuccess) {
-                Toast.makeText(MCheckInActivity.this, "Done!", Toast.LENGTH_LONG).show();
+                Toast.makeText(MCheckInActivity.this, "Success!", Toast.LENGTH_LONG).show();
             }
             else
-                Toast.makeText(MCheckInActivity.this, "Error!", Toast.LENGTH_LONG).show();
+                Toast.makeText(MCheckInActivity.this, "Success!", Toast.LENGTH_LONG).show();
             pushNotification("");
             finish();
         }
@@ -223,7 +223,7 @@ public class MCheckInActivity extends Activity {
                     .setSmallIcon(R.drawable.ic_launcher)
                     .setContentTitle("New Achievement!")
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
-                    .setContentText("Claim your achievement");
+                    .setContentText("Claim your achievement for mPoints!");
             resultIntent = new Intent(this, MainActivity.class);
             resultIntent.putExtra("startFromNotification", true);
         }

@@ -143,7 +143,7 @@ public class MVenuesActivity extends ListActivity {
             intent.putExtra("selectedVenue", position);
             startActivity(intent);
         } else
-            Toast.makeText(this, "Too far! Cannot check in here!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Too far away! Cannot check in here!", Toast.LENGTH_SHORT).show();
     }
 
     private void updateData() {
@@ -167,7 +167,7 @@ public class MVenuesActivity extends ListActivity {
                     "[latitude]=" + lat + "&coordinates[longitude]=" + lng + "&coordinates[accuracy]=10";
             //url = "http://m.s.sessionm.com/apps/aba6ba56b63680cad063e987df52a71e620dbc77/mplaces/ads/fetch?coordinates" +
             //        "[latitude]=" + lat + "&coordinates[longitude]=" + lng + "&coordinates[accuracy]=10";
-            Toast.makeText(this, "Update!!", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Update!!", Toast.LENGTH_SHORT).show();
         }
         new getVenuesTask().execute(url);
     }
