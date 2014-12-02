@@ -43,9 +43,9 @@ public class MapCheckinFragment extends Fragment implements GoogleMap.OnInfoWind
     public void setUpMapIfNeeded() {
         if (map == null) {
             //TODO need to find a better way
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
-                map = ((MapFragment) getChildFragmentManager().findFragmentById(R.id.location_map)).getMap();
-            else
+            //if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
+                //map = ((MapFragment) getChildFragmentManager().findFragmentById(R.id.location_map)).getMap();
+            //else
                 map = ((MapFragment) MainActivity.fragmentManager
                     .findFragmentById(R.id.location_map)).getMap();
             if (map != null)

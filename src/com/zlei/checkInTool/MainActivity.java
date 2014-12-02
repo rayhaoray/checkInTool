@@ -3,6 +3,7 @@ package com.zlei.checkInTool;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -11,11 +12,13 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -27,6 +30,7 @@ import com.sessionm.api.SessionM.ActivityType;
 import com.sessionm.api.ext.SessionM;
 import com.sessionm.api.ext.SessionMFragment;
 import com.sessionm.core.Config;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.zlei.ble.DeviceScanActivity;
 
 import br.com.condesales.EasyFoursquareAsync;
@@ -38,10 +42,13 @@ import br.com.condesales.tasks.users.UserImageRequest;
 
 public class MainActivity extends Activity implements
         AccessTokenRequestListener, ImageRequestListener {
+    private static final String TAG = "MainActivity";
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
+
+    private SlidingUpPanelLayout mLayout;
 
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
@@ -211,12 +218,29 @@ public class MainActivity extends Activity implements
             default:
                 break;
         }
-        fragmentManager.beginTransaction().replace(R.id.main_content, fragment).commit();
+        FragmentTransaction transaction = fragmentManager.beginTransaction().replace(R.id.main_content, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
 
         // update selected item and title, then close the drawer
         mDrawerList.setItemChecked(position, true);
+        mDrawerList.setId(position);
         setTitle(mListTitles[position]);
         mDrawerLayout.closeDrawer(mDrawerList);
+    }
+
+    @Override
+    public void onBackPressed() {
+        int position = mDrawerList.getId();
+        if (allowBackPressed(position)) { // and then you define a method allowBackPressed with the logic to allow back pressed or not
+            super.onBackPressed();
+        }
+        else
+            this.finish();
+    }
+
+    private boolean allowBackPressed(int position){
+        return position == 5;
     }
 
     @Override
